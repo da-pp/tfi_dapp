@@ -1,4 +1,3 @@
-// CU-19 Iniciar Sesión: validaciones de los pasos 12 a 14, envío y caminos alternativos.
 (() => {
     const formulario = document.getElementById("form-login");
     if (!formulario) return;
@@ -6,7 +5,6 @@
     const TIEMPO_ESPERA_MS = 15000;
     const LONGITUD_MAXIMA_CORREO = 254;
     const LONGITUD_MINIMA_CONTRASENA = 8;
-    // Misma expresión que LoginViewModel.FormatoCorreo: contiene "@" y dominio.
     const FORMATO_CORREO = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     const MENSAJE_ERROR_CONEXION = "No se pudo conectar al servidor. Verifica tu conexión a internet.";
 
@@ -43,7 +41,6 @@
         ayuda.textContent = mensaje || "";
     }
 
-    // Camino alternativo: resalta en rojo, muestra el helper y deja el foco en el primer campo con error.
     function mostrarErrores(errores) {
         let primero = null;
         for (const [nombre, input] of Object.entries(campos)) {
@@ -94,7 +91,6 @@
                 mostrarAlerta(datos.mensaje, { bloqueada: datos.cuentaBloqueada, conexion: datos.errorConexion });
             }
         } catch {
-            // Sin respuesta dentro del tiempo de espera o falla de red.
             mostrarAlerta(MENSAJE_ERROR_CONEXION, { conexion: true });
         } finally {
             clearTimeout(temporizador);
@@ -107,7 +103,6 @@
         enviar();
     });
 
-    // Paso 8: al confirmar el correo, el foco pasa al campo Contraseña.
     campos.Correo.addEventListener("keydown", (evento) => {
         if (evento.key === "Enter" && !campos.Contrasena.value) {
             evento.preventDefault();

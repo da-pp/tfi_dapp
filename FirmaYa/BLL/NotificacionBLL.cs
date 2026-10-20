@@ -4,17 +4,9 @@ using FirmaYa.Services;
 
 namespace FirmaYa.BLL;
 
-/// <summary>
-/// Participante ":NotificacionBLL" de los diagramas de secuencia — clase Notificacion del diagrama de clases.
-/// Envía el correo (CorreoService, Brevo SMTP) y registra cada envío mediante :DAL.
-/// Lo que se registra en notificacion.mensaje nunca incluye tokens ni códigos OTP.
-/// </summary>
+// Lo que se registra en notificacion.mensaje nunca incluye tokens ni códigos OTP.
 public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal hora)
 {
-    /// <summary>
-    /// CU-03 enviarInvitacionPorCorreo(correoElectronico, nombreParte, nombreContrato, token, mensajePersonalizado)
-    /// → correoEnviado (true) / errorEnvioCorreo (false). Incluye registrarEnvioCorreo.
-    /// </summary>
     public async Task<bool> EnviarInvitacionPorCorreo(string correoElectronico, string nombreParte, string nombreContrato,
         string enlaceTokenizado, string? mensajePersonalizado, int idContrato, CancellationToken ct)
     {
@@ -33,7 +25,6 @@ public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal ho
         return enviado;
     }
 
-    /// <summary>CU-05 notificarCambioEstado(idContrato, nuevoEstado) → notificacionesEnviadas.</summary>
     public async Task<int> NotificarCambioEstado(int idContrato, string nombreContrato, string nuevoEstado, CancellationToken ct)
     {
         var listaPartes = await ObtenerPartesConNotificacionesActivas(idContrato, ct);
@@ -45,7 +36,6 @@ public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal ho
         return notificaciones.Count(n => n.EstadoEnvio == EstadosEnvio.Enviado);
     }
 
-    /// <summary>CU-06 notificarNuevoComentario(idContrato, autor, textoComentario) → notificacionesEnviadas.</summary>
     public async Task<int> NotificarNuevoComentario(int idContrato, string nombreContrato, UsuarioActual autor,
         string textoComentario, CancellationToken ct)
     {
@@ -60,14 +50,9 @@ public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal ho
         return notificaciones.Count(n => n.EstadoEnvio == EstadosEnvio.Enviado);
     }
 
-    /// <summary>obtenerPartesConNotificacionesActivas(idContrato) → listaPartes</summary>
     public Task<List<ParteContrato>> ObtenerPartesConNotificacionesActivas(int idContrato, CancellationToken ct) =>
         dal.ObtenerPartesConNotificacionesActivas(idContrato, ct);
 
-    /// <summary>
-    /// CU-07 enviarSolicitudFirma(firmante, canalNotificacion, enlaceFirma, mensajePersonalizado)
-    /// → notificacionEnviada / errorEnvio. Incluye registrarEnvioNotificacion(firmante, idContrato, enlaceFirma).
-    /// </summary>
     public async Task<bool> EnviarSolicitudFirma(ParteContrato firmante, string canalNotificacion, string enlaceFirma,
         string? mensajePersonalizado, string nombreContrato, DateOnly? fechaLimiteFirma, CancellationToken ct)
     {
@@ -77,10 +62,6 @@ public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal ho
         return notificacion.EstadoEnvio == EstadosEnvio.Enviado;
     }
 
-    /// <summary>
-    /// CU-07 reintento: enviarSolicitudFirma(firmantesConError, canalNotificacion, mensajePersonalizado)
-    /// → resultadoReintento. Incluye registrarEnvioNotificacion(firmantesConError, idContrato).
-    /// </summary>
     public async Task<List<(ParteContrato Firmante, bool Enviado)>> EnviarSolicitudFirma(
         IReadOnlyList<(ParteContrato Firmante, string EnlaceFirma)> firmantesConError, string canalNotificacion,
         string? mensajePersonalizado, string nombreContrato, CancellationToken ct)
@@ -97,10 +78,6 @@ public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal ho
         return resultado;
     }
 
-    /// <summary>
-    /// CU-09 reenviarNotificacionFirma(firmante, idContrato) → notificacionEnviada / errorReenvio.
-    /// Incluye registrarEnvioNotificacion(firmante, idContrato).
-    /// </summary>
     public async Task<bool> ReenviarNotificacionFirma(ParteContrato firmante, int idContrato, string enlaceFirma,
         string nombreContrato, CancellationToken ct)
     {
@@ -110,7 +87,6 @@ public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal ho
         return notificacion.EstadoEnvio == EstadosEnvio.Enviado;
     }
 
-    /// <summary>CU-08 enviarCodigoOTP(correoFirmante, codigoOTP) → otpEnviado. Incluye registrarEnvioOTP (sin el código).</summary>
     public async Task<bool> EnviarCodigoOTP(string correoFirmante, string codigoOTP, int idContrato, CancellationToken ct)
     {
         var cuerpo = $"""
@@ -125,7 +101,6 @@ public sealed class NotificacionBLL(IDAL dal, CorreoService correo, HoraLocal ho
         return enviado;
     }
 
-    /// <summary>CU-08 notificarContratoFirmado(idContrato, parteResponsable) → notificacionEnviada.</summary>
     public async Task<bool> NotificarContratoFirmado(int idContrato, Contrato parteResponsable, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(parteResponsable.EmailCreador))

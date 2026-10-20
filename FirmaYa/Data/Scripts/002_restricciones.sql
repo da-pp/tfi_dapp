@@ -1,11 +1,9 @@
--- FirmaYA - 002: claves foráneas y restricciones documentadas.
--- Ejecutar después de 001_crear_esquema.sql.
+-- FirmaYA 002: claves foráneas y restricciones.
 
 BEGIN;
 
 ALTER TABLE usuario
     ADD CONSTRAINT fk_usuario_id_rol FOREIGN KEY (id_rol) REFERENCES rol (id_rol),
-    -- CU-15 paso 13: el email no puede estar ya registrado en el sistema.
     ADD CONSTRAINT uq_usuario_email UNIQUE (email);
 
 ALTER TABLE sesion

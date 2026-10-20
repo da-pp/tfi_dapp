@@ -2,7 +2,6 @@ using System.Globalization;
 
 namespace FirmaYa.Models.ViewModels;
 
-/// <summary>Formulario de alta de contrato del CU-01 (pasos 6 a 10) y sus validaciones (paso 16).</summary>
 public sealed class NuevoContratoViewModel
 {
     public const string MensajeObligatorio = "Este campo es obligatorio";

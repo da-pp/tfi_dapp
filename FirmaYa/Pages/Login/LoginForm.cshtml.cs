@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FirmaYa.Pages.Login;
 
-/// <summary>Participante "LoginForm" del diagrama de secuencia del CU-19 Iniciar Sesión.</summary>
 public class LoginForm(AccesoBLL accesoBLL) : PageModel
 {
     [BindProperty]
@@ -17,7 +16,6 @@ public class LoginForm(AccesoBLL accesoBLL) : PageModel
 
     public LoginRespuesta? Respuesta { get; private set; }
 
-    /// <summary>"accede a la plataforma" → mostrar pantalla de inicio de sesión (pasos 1 a 6).</summary>
     public IActionResult OnGet()
     {
         if (User.Identity?.IsAuthenticated == true)
@@ -26,7 +24,6 @@ public class LoginForm(AccesoBLL accesoBLL) : PageModel
         return Page();
     }
 
-    /// <summary>clic "Iniciar Sesión" (paso 11).</summary>
     public async Task<IActionResult> OnPostAsync(CancellationToken ct)
     {
         var respuesta = await IniciarSesion(ct);
@@ -42,7 +39,6 @@ public class LoginForm(AccesoBLL accesoBLL) : PageModel
         return Page();
     }
 
-    /// <summary>Paso 20: panel principal según el rol asignado.</summary>
     public static string? PanelPrincipalSegunRol(string? rol) => rol switch
     {
         Roles.Abogado or Roles.AgenteInmobiliario => "/Dashboard",
@@ -55,7 +51,6 @@ public class LoginForm(AccesoBLL accesoBLL) : PageModel
 
     private async Task<LoginRespuesta> IniciarSesion(CancellationToken ct)
     {
-        // alt [Campos vacíos o correo con formato inválido o contraseña con menos de 8 caracteres] — pasos 12 a 14.
         var errores = Entrada.Validar();
         if (errores.Count > 0)
             return LoginRespuesta.ConErrores(errores);
@@ -67,7 +62,6 @@ public class LoginForm(AccesoBLL accesoBLL) : PageModel
         }
         catch (ErrorPersistenciaException)
         {
-            // alt [Error de conexión al servidor]. El detalle técnico ya quedó en el log.
             return LoginRespuesta.SinConexion();
         }
 
@@ -82,7 +76,6 @@ public class LoginForm(AccesoBLL accesoBLL) : PageModel
                         IsPersistent = false,
                         ExpiresUtc = new DateTimeOffset(sesion.FechaExpiracion, TimeSpan.Zero)
                     });
-                // Paso 19: "Bienvenido, [nombre del usuario]." se muestra en el panel tras la redirección del paso 20.
                 TempData["Bienvenida"] = $"Bienvenido, {sesion.NombreUsuario}.";
                 return LoginRespuesta.Exitosa(PanelPrincipalSegunRol(sesion.RolUsuario)!);
 

@@ -1,13 +1,4 @@
--- FirmaYA - 001: creación de tablas (PostgreSQL / Supabase SQL Editor).
--- Fuente de verdad: documento FirmaYA-145-213, 10.5.4 Diagrama Entidad Relación (17 tablas).
--- Longitudes ajustadas solo donde el texto de los casos de uso del mismo documento fija un máximo:
---   usuario.email / usuario_contrato.correo_invitado / notificacion.correo_destino = 254 (CU-03, CU-15, CU-19)
---   contrato.nombre = 200 y contrato.descripcion_propiedad = 2000 (CU-01)
---   plantilla.nombre = 200 y plantilla.descripcion_uso = 500 (CU-16)
---   comentario.texto = 1000 (CU-06)
--- Conversión: DATETIME -> TIMESTAMP WITHOUT TIME ZONE (se guarda en UTC), BLOB -> BYTEA.
--- Las claves foráneas y restricciones están en 002_restricciones.sql.
--- Ejecutar sobre una base vacía.
+-- FirmaYA 001: tablas. Ejecutar sobre una base vacía, antes de 002.
 
 BEGIN;
 

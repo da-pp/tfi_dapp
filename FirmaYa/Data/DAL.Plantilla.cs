@@ -3,7 +3,6 @@ using Npgsql;
 
 namespace FirmaYa.Data;
 
-/// <summary>Operaciones de :DAL invocadas por :PlantillaBLL (CU-01).</summary>
 public sealed partial class DAL
 {
     private const string SelectPlantilla = """
@@ -16,7 +15,6 @@ public sealed partial class DAL
             ListaAsync(Comando(SelectPlantilla + " WHERE estado = $1 ORDER BY tipo_contrato, version DESC", conexion, null,
                 EstadosPlantilla.Activa), LeerPlantilla, token), ct);
 
-    /// <summary>La plantilla activa del tipo pedido; si hay varias versiones, la más reciente.</summary>
     public Task<Plantilla?> ObtenerPlantillaPorTipo(string tipoPlantilla, CancellationToken ct) =>
         EjecutarConsulta((conexion, token) =>
             PrimeroAsync(Comando(SelectPlantilla + " WHERE estado = $1 AND tipo_contrato = $2 ORDER BY version DESC, id_plantilla DESC LIMIT 1",

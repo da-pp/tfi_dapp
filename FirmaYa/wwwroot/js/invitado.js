@@ -1,4 +1,3 @@
-// CU-04 pasos 18 a 20 y camino "Sesión expirada por inactividad".
 (() => {
     const vista = document.getElementById("vista-contrato");
     if (!vista) return;

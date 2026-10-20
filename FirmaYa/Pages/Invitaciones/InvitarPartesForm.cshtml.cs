@@ -5,12 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FirmaYa.Pages.Invitaciones;
 
-/// <summary>Participante "InvitarPartesForm" del diagrama de secuencia del CU-03 Invitar a las partes al contrato.</summary>
 public class InvitarPartesForm(ContratoBLL contratoBLL, NotificacionBLL notificacionBLL) : ContratoPageModel
 {
     public const string MensajeErrorEnvio = "No se pudo enviar el correo de invitación. ¿Desea reintentar o copiar el enlace manualmente?";
 
-    /// <summary>listaPartesInvitadas</summary>
     public List<ParteContrato> ListaPartesInvitadas { get; private set; } = [];
 
     [BindProperty] public string? CorreoElectronico { get; set; }
@@ -21,17 +19,14 @@ public class InvitarPartesForm(ContratoBLL contratoBLL, NotificacionBLL notifica
     public Dictionary<string, string> Errores { get; private set; } = [];
     public string? ErrorGeneral { get; private set; }
 
-    /// <summary>errorEnvioCorreo(enlaceTokenizado)</summary>
     public ErrorEnvioCorreo? ErrorEnvio { get; private set; }
 
-    /// <summary>clic "Invitar a las partes" → obtenerPartesInvitadas(idContrato)</summary>
     public async Task<IActionResult> OnGetAsync(CancellationToken ct)
     {
         await Cargar(ct);
         return Page();
     }
 
-    /// <summary>Validación en tiempo real (pasos 8 y 9): validarCorreoFormatoYDuplicado(idContrato, correoElectronico).</summary>
     public async Task<IActionResult> OnPostValidarCorreoAsync(string? correoElectronico, CancellationToken ct)
     {
         var resultado = await contratoBLL.ValidarCorreoFormatoYDuplicado(IdContrato, correoElectronico, Usuario, ct);
@@ -47,7 +42,6 @@ public class InvitarPartesForm(ContratoBLL contratoBLL, NotificacionBLL notifica
         });
     }
 
-    /// <summary>clic "Enviar invitación" → invitarParte(idContrato, correoElectronico, nombreParte, rol, mensajePersonalizado)</summary>
     public async Task<IActionResult> OnPostAsync(CancellationToken ct)
     {
         var resultado = await contratoBLL.InvitarParte(IdContrato, CorreoElectronico, NombreParte, Rol, MensajePersonalizado, Usuario, ct);
@@ -70,10 +64,6 @@ public class InvitarPartesForm(ContratoBLL contratoBLL, NotificacionBLL notifica
         return Page();
     }
 
-    /// <summary>
-    /// "Reintentar": enviarInvitacionPorCorreo(correoElectronico, nombreParte, nombreContrato, token, mensajePersonalizado).
-    /// Si el envío es exitoso se actualiza el estado a "Invitación enviada".
-    /// </summary>
     public async Task<IActionResult> OnPostReintentarAsync(CancellationToken ct)
     {
         await Cargar(ct);

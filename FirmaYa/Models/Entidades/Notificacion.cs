@@ -1,9 +1,5 @@
 namespace FirmaYa.Models.Entidades;
 
-/// <summary>
-/// Tabla notificacion del DER. NotificacionBLL envía el correo y luego :DAL registra el envío con este objeto
-/// (registrarEnvioCorreo, registrarEnvioNotificacion, registrarEnvioOTP, enviarNotificaciones…).
-/// </summary>
 public sealed class Notificacion
 {
     public int IdNotificacion { get; set; }
@@ -19,7 +15,6 @@ public sealed class Notificacion
 
 public static class CanalesNotificacion
 {
-    /// <summary>CU-07 paso 8: única opción disponible.</summary>
     public const string CorreoElectronico = "Correo electrónico";
 }
 
@@ -29,7 +24,6 @@ public static class EstadosEnvio
     public const string Error = "Error";
 }
 
-/// <summary>Valores de notificacion.tipo.</summary>
 public static class TiposNotificacion
 {
     public const string Invitacion = "Invitación";

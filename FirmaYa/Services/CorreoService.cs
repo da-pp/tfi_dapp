@@ -7,27 +7,20 @@ namespace FirmaYa.Services;
 
 public sealed class CorreoOptions
 {
-    /// <summary>Brevo: smtp-relay.brevo.com</summary>
     public string? Host { get; set; }
     public int Puerto { get; set; } = 587;
-    /// <summary>Login SMTP de Brevo. Guardar con user-secrets o variables de entorno.</summary>
     public string? Usuario { get; set; }
-    /// <summary>Clave SMTP de Brevo. Guardar con user-secrets o variables de entorno.</summary>
     public string? Contrasena { get; set; }
     public string? Remitente { get; set; }
     public string NombreRemitente { get; set; } = "FirmaYa";
 
-    /// <summary>
-    /// Solo desarrollo: si se define, los correos no se envían y se guardan como .eml en esta carpeta
-    /// (relativa a la raíz del proyecto). Así se puede leer el código OTP sin escribirlo en los logs.
-    /// </summary>
+    // Solo desarrollo: si se define, los correos no se envían y se guardan como .eml en esta carpeta
+    // (relativa a la raíz del proyecto). Así se puede leer el código OTP sin escribirlo en los logs.
     public string? DirectorioPrueba { get; set; }
 }
 
-/// <summary>Envío de correo por SMTP (Brevo). Lo usa NotificacionBLL.</summary>
 public sealed class CorreoService(IOptions<CorreoOptions> opciones, IHostEnvironment entorno, ILogger<CorreoService> logger)
 {
-    /// <summary>Devuelve false si el correo no pudo enviarse; el motivo queda en el log, sin el contenido del mensaje.</summary>
     public async Task<bool> EnviarAsync(string destinatario, string asunto, string cuerpo, CancellationToken ct)
     {
         var configuracion = opciones.Value;

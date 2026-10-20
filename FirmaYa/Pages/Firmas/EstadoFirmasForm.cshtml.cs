@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FirmaYa.Pages.Firmas;
 
-/// <summary>Participante "EstadoFirmasForm" del diagrama de secuencia del CU-09 Consultar estado de firmas pendientes.</summary>
 public class EstadoFirmasForm(ContratoBLL contratoBLL) : ContratoPageModel
 {
     public const string MensajeSinSolicitudes = "Aún no se han enviado solicitudes de firma para este contrato.";
@@ -14,7 +13,6 @@ public class EstadoFirmasForm(ContratoBLL contratoBLL) : ContratoPageModel
 
     public EstadoFirmas? Estado { get; private set; }
 
-    /// <summary>errorReenvio(enlaceFirmante)</summary>
     public ErrorReenvio? ErrorReenvio { get; private set; }
 
     [BindProperty]
@@ -23,14 +21,12 @@ public class EstadoFirmasForm(ContratoBLL contratoBLL) : ContratoPageModel
     public int FirmasCompletadas => Estado?.ListaFirmantes.Count(f => f.EstadoFirma == EstadosFirma.Firmado) ?? 0;
     public bool TodasFirmadas => Estado is { ListaFirmantes.Count: > 0 } && FirmasCompletadas == Estado.ListaFirmantes.Count;
 
-    /// <summary>clic en pestaña "Estado de Firmas" → obtenerEstadoFirmas(idContrato)</summary>
     public async Task<IActionResult> OnGetAsync(CancellationToken ct)
     {
         await Cargar(ct);
         return Page();
     }
 
-    /// <summary>"Confirmar" el reenvío (o "Reintentar") → reenviarSolicitudFirma(idContrato, firmante)</summary>
     public async Task<IActionResult> OnPostReenviarAsync(CancellationToken ct)
     {
         switch (await contratoBLL.ReenviarSolicitudFirma(IdContrato, Firmante, Usuario, ct))

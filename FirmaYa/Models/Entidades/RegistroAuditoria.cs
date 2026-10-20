@@ -1,6 +1,5 @@
 namespace FirmaYa.Models.Entidades;
 
-/// <summary>Tabla auditoria del DER. fecha_hora se maneja en UTC.</summary>
 public sealed class RegistroAuditoria
 {
     public int IdRegistro { get; set; }
@@ -13,7 +12,6 @@ public sealed class RegistroAuditoria
     public string? Descripcion { get; set; }
 }
 
-/// <summary>Valores de auditoria.tipo_accion usados por los casos de uso implementados.</summary>
 public static class TiposAccion
 {
     public const string InicioSesion = "Inicio de sesión";

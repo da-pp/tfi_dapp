@@ -1,6 +1,4 @@
-// FirmaYa — comportamiento compartido de las pantallas (JavaScript puro).
 const FirmaYa = (() => {
-    // Diálogo modal con botones configurables. Devuelve una promesa con la clave del botón elegido.
     function dialogo(texto, botones) {
         return new Promise((resolver) => {
             const fondo = document.createElement("div");
@@ -81,7 +79,6 @@ const FirmaYa = (() => {
 })();
 
 (() => {
-    // Avisos flotantes (p. ej. "Bienvenido, [nombre].") que se ocultan solos.
     document.querySelectorAll("[data-autocerrar]").forEach((aviso) => {
         setTimeout(() => {
             aviso.classList.add("aviso--oculto");
@@ -89,12 +86,10 @@ const FirmaYa = (() => {
         }, 4000);
     });
 
-    // Botones "Copiar enlace" / "Copiar hash".
     document.querySelectorAll("[data-copiar]").forEach((boton) => {
         boton.addEventListener("click", () => FirmaYa.copiar(boton.dataset.copiar, boton.dataset.confirmacion));
     });
 
-    // Fechas DD/MM/AAAA: agrega las barras mientras se escribe.
     document.querySelectorAll("input[data-fecha]").forEach((input) => {
         input.addEventListener("input", () => {
             const digitos = input.value.replace(/\D/g, "").slice(0, 8);
@@ -103,7 +98,6 @@ const FirmaYa = (() => {
         });
     });
 
-    // Contador de caracteres restantes (CU-06 pasos 8 y 11).
     document.querySelectorAll("textarea[data-contador]").forEach((area) => {
         const nota = document.getElementById(area.dataset.contador);
         const maximo = Number(area.getAttribute("maxlength"));
@@ -116,7 +110,6 @@ const FirmaYa = (() => {
         actualizar();
     });
 
-    // Campos obligatorios: resalta en rojo y muestra "Este campo es obligatorio" antes de enviar.
     document.querySelectorAll("form[data-validar]").forEach((formulario) => {
         formulario.addEventListener("submit", (evento) => {
             let primero = null;
@@ -137,7 +130,6 @@ const FirmaYa = (() => {
             input.addEventListener("input", () => FirmaYa.marcarCampo(input, null)));
     });
 
-    // Confirmación antes de enviar: data-confirmar="¿Confirma …?" admite {campo} con el texto elegido en un select.
     document.querySelectorAll("form[data-confirmar]").forEach((formulario) => {
         formulario.addEventListener("submit", async (evento) => {
             if (formulario.dataset.confirmado === "si") return;

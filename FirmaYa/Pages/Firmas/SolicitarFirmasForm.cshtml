@@ -17,7 +17,6 @@
 
 @if (Model.Resultado is { } resultado)
 {
-    @* alt [Falla en el envío para uno o más firmantes] *@
     <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">
         <p class="alerta__texto">No se pudo enviar la notificación a: @string.Join(", ", resultado.FirmantesConError.Select(f => f.NombreVisible)).</p>
         <div class="alerta__acciones">
@@ -51,7 +50,6 @@
 }
 else if (Model.ListaFirmantes.Count == 0)
 {
-    @* alt [No hay firmantes asignados] *@
     <section class="tarjeta">
         <p class="nota">@SolicitarFirmasForm.MensajeSinFirmantes</p>
         <div class="acciones" style="margin-top:14px">

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FirmaYa.Pages.Contratos;
 
-/// <summary>Participante "EditarContratoForm" del diagrama de secuencia del CU-02 Editar contrato en línea.</summary>
 public class EditarContratoForm(ContratoBLL contratoBLL) : ContratoPageModel
 {
     public const string MensajeNoEditable = "Este contrato no puede ser editado en su estado actual.";
@@ -17,11 +16,9 @@ public class EditarContratoForm(ContratoBLL contratoBLL) : ContratoPageModel
     [BindProperty]
     public string? ComentarioVersion { get; set; }
 
-    /// <summary>"Ver Contrato": modo solo lectura.</summary>
     [BindProperty(SupportsGet = true)]
     public bool SoloLectura { get; set; }
 
-    /// <summary>Número de versión recién guardada: el editor descarta el borrador local.</summary>
     [BindProperty(SupportsGet = true)]
     public int? Guardado { get; set; }
 
@@ -29,10 +26,8 @@ public class EditarContratoForm(ContratoBLL contratoBLL) : ContratoPageModel
     public string? ErrorComentario { get; private set; }
     public string? ErrorGeneral { get; private set; }
 
-    /// <summary>alt [Contrato en estado Borrador o En Revisión] y el usuario es el titular.</summary>
     public bool Editable => Contrato is not null && EsTitular && EstadosContrato.EsEditable(Contrato.Estado);
 
-    /// <summary>clic "Editar" → obtenerContrato(idContrato)</summary>
     public async Task<IActionResult> OnGetAsync(CancellationToken ct)
     {
         Contrato = await contratoBLL.ObtenerContrato(IdContrato, Usuario, ct) ?? throw new AccesoDenegadoException();
@@ -42,7 +37,6 @@ public class EditarContratoForm(ContratoBLL contratoBLL) : ContratoPageModel
         return Page();
     }
 
-    /// <summary>clic "Guardar Versión" → guardarNuevaVersion(idContrato, contenidoNuevo, comentarioVersion, autor)</summary>
     public async Task<IActionResult> OnPostAsync(CancellationToken ct)
     {
         Contrato = await contratoBLL.ObtenerContrato(IdContrato, Usuario, ct) ?? throw new AccesoDenegadoException();

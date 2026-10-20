@@ -7,13 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FirmaYa.Pages.Firmas;
 
-/// <summary>Participante "SolicitarFirmasForm" del diagrama de secuencia del CU-07 Solicitar firma de las partes.</summary>
 public class SolicitarFirmasForm(ContratoBLL contratoBLL, HoraLocal hora) : ContratoPageModel
 {
     public const string MensajeSinFirmantes =
         "No hay firmantes asignados. Debe invitar al menos a una parte con el rol de Firmante antes de solicitar firmas.";
 
-    /// <summary>listaFirmantes(nombre, correoElectronico, estadoFirma)</summary>
     public List<ParteContrato> ListaFirmantes { get; private set; } = [];
 
     [BindProperty] public string? CanalNotificacion { get; set; }
@@ -23,24 +21,20 @@ public class SolicitarFirmasForm(ContratoBLL contratoBLL, HoraLocal hora) : Cont
 
     public Dictionary<string, string> Errores { get; private set; } = [];
 
-    /// <summary>resultadoSolicitudes con firmantes con error (camino "Fallo en el envío de notificaciones").</summary>
     public ResultadoSolicitudes? Resultado { get; private set; }
 
     public int FirmasCompletadas => ListaFirmantes.Count(f => f.EstadoFirma == EstadosFirma.Firmado);
 
-    /// <summary>clic "Solicitar firmas" → obtenerFirmantes(idContrato)</summary>
     public async Task<IActionResult> OnGetAsync(CancellationToken ct)
     {
         await Cargar(ct);
         return Page();
     }
 
-    /// <summary>clic "Enviar solicitudes de firma" → solicitarFirmas(idContrato, listaFirmantes, canalNotificacion, mensajePersonalizado, fechaLimiteFirma)</summary>
     public async Task<IActionResult> OnPostAsync(CancellationToken ct)
     {
         await Cargar(ct);
 
-        // alt [canalNotificacion seleccionado y fechaLimiteFirma válida (si fue ingresada)] — pasos 12 y 13.
         if (CanalNotificacion != CanalesNotificacion.CorreoElectronico)
             Errores[nameof(CanalNotificacion)] = "Seleccione un canal de notificación";
         DateOnly? fechaLimite = null;
@@ -60,7 +54,6 @@ public class SolicitarFirmasForm(ContratoBLL contratoBLL, HoraLocal hora) : Cont
             Usuario, ct), ct);
     }
 
-    /// <summary>alt [Usuario clic "Reintentar fallidos"] → reintentarEnviosFallidos(idContrato, firmantesConError, canalNotificacion, mensajePersonalizado)</summary>
     public async Task<IActionResult> OnPostReintentarAsync(CancellationToken ct)
     {
         await Cargar(ct);

@@ -3,11 +3,8 @@ using FirmaYa.Models.Entidades;
 
 namespace FirmaYa.Data.Memory;
 
-/// <summary>Operaciones de :DAL invocadas por :AccesoBLL (CU-19, CU-04 y CU-08), con la misma semántica que DAL.Acceso.cs.</summary>
 public sealed partial class DALMemoria
 {
-    // ================= CU-19 =================
-
     public Task<Usuario?> ObtenerUsuarioPorCorreo(string correoElectronico, CancellationToken ct)
     {
         lock (_bloqueo)
@@ -67,8 +64,6 @@ public sealed partial class DALMemoria
         return Task.CompletedTask;
     }
 
-    // ================= CU-04 =================
-
     public Task<ParteContrato?> ObtenerTokenAcceso(TokenEnlace token, CancellationToken ct)
     {
         lock (_bloqueo)
@@ -83,8 +78,6 @@ public sealed partial class DALMemoria
 
     public Task RenovarToken(TokenEnlace token, DateTime fechaHora, CancellationToken ct) =>
         AuditoriaPorToken(token, TiposAccion.RenovacionSesion, fechaHora, null, "La parte extendió la sesión.");
-
-    // ================= CU-08 =================
 
     public Task<ParteContrato?> ObtenerTokenFirma(TokenEnlace token, CancellationToken ct) => ObtenerTokenAcceso(token, ct);
 
@@ -150,8 +143,6 @@ public sealed partial class DALMemoria
             return Task.FromResult(restantes);
         }
     }
-
-    // ================= Auxiliares =================
 
     private Task AuditoriaPorToken(TokenEnlace token, string tipoAccion, DateTime fechaHora, string? ip, string descripcion)
     {

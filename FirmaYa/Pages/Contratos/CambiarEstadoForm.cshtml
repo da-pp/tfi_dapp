@@ -16,7 +16,6 @@
 
 @if (Model.MostrarAvisoSinFirmantes)
 {
-    @* alt [Nuevo estado es "Listo para firmar" y no hay firmantes asignados] *@
     <div class="alerta alerta--advertencia" role="alert" style="margin-bottom:16px">
         <p class="alerta__texto">@CambiarEstadoForm.MensajeSinFirmantes</p>
         <div class="alerta__acciones">
@@ -83,7 +82,6 @@
 
 @section Scripts {
     <script>
-        // CU-05 paso 6: descripción informativa del estado seleccionado.
         (() => {
             const lista = document.getElementById("nuevo-estado");
             const descripcion = document.getElementById("descripcion-estado");

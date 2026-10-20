@@ -1,4 +1,3 @@
-// CU-10 pasos 4 y 13 a 16, y camino "Error en la generación del PDF" (Reintentar / Cancelar).
 (() => {
     const seccion = document.getElementById("descarga");
     const enlace = seccion?.querySelector("[data-descargar]");

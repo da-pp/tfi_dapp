@@ -1,6 +1,5 @@
 namespace FirmaYa.Models.ViewModels;
 
-/// <summary>Formulario de inicio de sesión (CU-19, pasos 3 y 4; validaciones de los pasos 12 a 14).</summary>
 public sealed class LoginViewModel
 {
     public const int LongitudMaximaCorreo = ValidacionCorreo.LongitudMaxima;
@@ -27,7 +26,6 @@ public sealed class LoginViewModel
     }
 }
 
-/// <summary>Respuesta del POST de inicio de sesión, usada como JSON por login.js y para renderizar la página.</summary>
 public sealed record LoginRespuesta(
     bool Exito,
     string? Redireccion = null,

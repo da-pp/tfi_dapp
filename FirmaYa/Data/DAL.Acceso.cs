@@ -4,11 +4,8 @@ using Npgsql;
 
 namespace FirmaYa.Data;
 
-/// <summary>Operaciones de :DAL invocadas por :AccesoBLL (CU-19, CU-04 y CU-08).</summary>
 public sealed partial class DAL
 {
-    // ================= CU-19 Iniciar Sesión =================
-
     public Task<Usuario?> ObtenerUsuarioPorCorreo(string correoElectronico, CancellationToken ct) =>
         EjecutarConsulta((conexion, token) =>
         {
@@ -38,10 +35,6 @@ public sealed partial class DAL
                 }, token);
         }, ct);
 
-    /// <summary>
-    /// Reinicia los intentos fallidos, deja la cuenta Activa (si venía de un bloqueo vencido)
-    /// y registra el inicio de sesión en auditoria.
-    /// </summary>
     public Task RegistrarInicioSesion(string correoElectronico, DateTime fechaHora, string? ip, CancellationToken ct) =>
         EjecutarModificacion(async (conexion, transaccion, token) =>
         {
@@ -58,10 +51,6 @@ public sealed partial class DAL
                 "usuario", idUsuario, fechaHora, ip, "Inicio de sesión exitoso.", token);
         }, ct);
 
-    /// <summary>
-    /// Suma un intento fallido. Si la cuenta estaba Bloqueada (AccesoBLL solo llama aquí cuando el bloqueo ya venció),
-    /// vuelve a Activa y el conteo empieza de nuevo. Una cuenta Inactiva nunca se modifica.
-    /// </summary>
     public Task<int> IncrementarIntentosFallidos(string correoElectronico, CancellationToken ct) =>
         EjecutarModificacion(async (conexion, transaccion, token) =>
         {
@@ -92,8 +81,6 @@ public sealed partial class DAL
                 $"Cuenta bloqueada por {duracionMinutos} minutos por intentos fallidos."), token);
         }, ct);
 
-    // ================= CU-04 Ver contrato como parte invitada =================
-
     public Task<ParteContrato?> ObtenerTokenAcceso(TokenEnlace token, CancellationToken ct) =>
         EjecutarConsulta((conexion, cancelacion) =>
             PrimeroAsync(Comando(SelectParteConFirma + " WHERE p.token_invitacion = $1", conexion, null, token.Valor),
@@ -104,8 +91,6 @@ public sealed partial class DAL
 
     public Task RenovarToken(TokenEnlace token, DateTime fechaHora, CancellationToken ct) =>
         InsertarAuditoriaPorTokenAsync(token, TiposAccion.RenovacionSesion, fechaHora, null, "La parte extendió la sesión.", ct);
-
-    // ================= CU-08 Firmar contrato vía OTP =================
 
     public Task<ParteContrato?> ObtenerTokenFirma(TokenEnlace token, CancellationToken ct) => ObtenerTokenAcceso(token, ct);
 
@@ -149,10 +134,6 @@ public sealed partial class DAL
                     lector.GetBoolean(3)), cancelacion);
         }, ct);
 
-    /// <summary>
-    /// Registra el intento incorrecto en auditoría y devuelve los intentos restantes.
-    /// Al llegar a 0 bloquea el enlace (estado_invitacion = Bloqueado).
-    /// </summary>
     public Task<int> IncrementarIntentosFallidos(TokenEnlace token, int maxIntentos, DateTime fechaHora, CancellationToken ct) =>
         EjecutarModificacion(async (conexion, transaccion, cancelacion) =>
         {
@@ -182,8 +163,6 @@ public sealed partial class DAL
             }
             return restantes;
         }, ct);
-
-    // ================= Auxiliares =================
 
     private Task InsertarAuditoriaPorTokenAsync(TokenEnlace token, string tipoAccion, DateTime fechaHora, string? ip,
         string descripcion, CancellationToken ct) =>

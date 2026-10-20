@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Controlador ADO.NET de PostgreSQL. No se usa ningún ORM. -->
     <PackageReference Include="Npgsql" Version="8.0.7" />
   </ItemGroup>
 

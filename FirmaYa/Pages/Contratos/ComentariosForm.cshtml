@@ -51,7 +51,6 @@
         }
         else if (!ContratoBLL.RolPermiteComentar(Model.RolUsuario))
         {
-            @* alt [Rol es Solo lectura] *@
             <p class="alerta alerta--info">@ComentariosForm.MensajeSoloLectura</p>
         }
         else
@@ -76,7 +75,6 @@
 
 @section Scripts {
     <script>
-        // CU-06 pasos 3, 4, 9 y 13: fragmento seleccionado y validación de comentario vacío.
         (() => {
             const formulario = document.getElementById("form-comentario");
             if (!formulario) return;

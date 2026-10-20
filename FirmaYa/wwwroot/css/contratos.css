@@ -1,4 +1,3 @@
-/* FirmaYa — pantallas de contrato (prototipos CU-01 a CU-10). Usa los tokens de site.css. */
 
 .barra__marca a,
 .barra__enlace {
@@ -15,7 +14,6 @@
     color: var(--color-texto);
 }
 
-/* Título con ícono negro redondeado */
 .encabezado-pagina {
     display: flex;
     align-items: flex-end;
@@ -54,7 +52,6 @@
     margin-bottom: 0;
 }
 
-/* Tarjeta de metadatos CONTRATO / ESTADO / VERSIÓN / HASH */
 .metadatos {
     display: grid;
     grid-template-columns: 1.3fr 1fr 1fr 1.6fr;
@@ -90,7 +87,6 @@
     overflow-wrap: anywhere;
 }
 
-/* Pestañas del contrato */
 .pestanas {
     display: flex;
     gap: 4px;
@@ -123,7 +119,6 @@
     color: #ffffff;
 }
 
-/* Grillas de los prototipos */
 .grilla {
     display: grid;
     gap: 16px;
@@ -183,7 +178,6 @@
     justify-content: flex-end;
 }
 
-/* Controles adicionales */
 textarea.campo__control {
     height: auto;
     min-height: 96px;
@@ -216,7 +210,6 @@ select.campo__control {
     font-weight: 600;
 }
 
-/* Etiquetas de estado */
 .etiqueta--exito {
     background: #ecfdf5;
     border-color: #a7f3d0;
@@ -241,7 +234,6 @@ select.campo__control {
     color: #1d4ed8;
 }
 
-/* Tablas */
 .tabla-contenedor {
     border: 1px solid var(--color-borde);
     border-radius: 14px;
@@ -277,7 +269,6 @@ select.campo__control {
     color: var(--color-texto-tenue);
 }
 
-/* Selección de plantilla (CU-01) */
 .selector {
     display: flex;
     flex-direction: column;
@@ -316,7 +307,6 @@ select.campo__control {
     color: var(--color-texto-tenue);
 }
 
-/* Contenido del contrato */
 .contenido-contrato {
     padding: 22px 24px;
     border: 1px solid var(--color-borde);
@@ -363,7 +353,6 @@ select.campo__control {
     color: #1e3a8a;
 }
 
-/* Editor (CU-02) */
 .editor__barra {
     display: flex;
     align-items: center;
@@ -430,7 +419,6 @@ select.campo__control {
     content: "• ";
 }
 
-/* Comentarios (CU-06) */
 .comentario {
     padding: 12px 14px;
     border-radius: 12px;
@@ -455,7 +443,6 @@ select.campo__control {
     white-space: pre-line;
 }
 
-/* Progreso de firmas (CU-07, CU-09) */
 .progreso {
     display: flex;
     align-items: center;
@@ -479,7 +466,6 @@ select.campo__control {
     background: var(--color-primario);
 }
 
-/* Avisos */
 .nota {
     padding: 12px 14px;
     border: 1px solid var(--color-advertencia-borde);
@@ -520,7 +506,6 @@ select.campo__control {
     color: var(--color-texto-secundario);
 }
 
-/* Descarga del PDF (CU-10) */
 .descarga {
     display: flex;
     flex-direction: column;
@@ -551,7 +536,6 @@ select.campo__control {
     text-align: left;
 }
 
-/* Diálogo modal */
 .modal {
     position: fixed;
     inset: 0;
@@ -578,7 +562,6 @@ select.campo__control {
     font-weight: 600;
 }
 
-/* Firma OTP (CU-08) */
 .paso {
     display: flex;
     align-items: flex-start;

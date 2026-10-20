@@ -1,6 +1,5 @@
 namespace FirmaYa.Models.Entidades;
 
-/// <summary>Tabla comentario del DER, con el nombre del autor (usuario).</summary>
 public sealed class Comentario
 {
     public int IdComentario { get; set; }

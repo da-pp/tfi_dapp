@@ -1,6 +1,5 @@
 namespace FirmaYa.Models.Entidades;
 
-/// <summary>Tabla version_contrato del DER. fecha_creacion en UTC.</summary>
 public sealed class VersionContrato
 {
     public int IdVersion { get; set; }

@@ -1,4 +1,3 @@
-// CU-03 pasos 8 y 9: valida en tiempo real el formato del correo y que no esté ya invitado al contrato.
 (() => {
     const formulario = document.getElementById("form-invitar");
     if (!formulario) return;
@@ -36,7 +35,6 @@
     });
     correo.addEventListener("blur", validar);
 
-    // "Esta dirección ya ha sido invitada a este contrato": se bloquea el envío.
     formulario.addEventListener("submit", (evento) => {
         if (!correoValido) {
             evento.preventDefault();

@@ -1,4 +1,3 @@
-/* FirmaYa — tokens y componentes base, tomados de los prototipos del documento. */
 :root {
     --color-fondo: #eef2f7;
     --color-superficie: #ffffff;
@@ -52,7 +51,6 @@ h1, h2, h3, p {
     display: none !important;
 }
 
-/* Botones */
 .boton {
     display: inline-flex;
     align-items: center;
@@ -109,7 +107,6 @@ h1, h2, h3, p {
     width: 100%;
 }
 
-/* Campos de formulario */
 .campo {
     display: flex;
     flex-direction: column;
@@ -165,7 +162,6 @@ h1, h2, h3, p {
     box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
 }
 
-/* Alertas */
 .alerta {
     display: flex;
     flex-direction: column;
@@ -193,7 +189,6 @@ h1, h2, h3, p {
     gap: 8px;
 }
 
-/* Etiqueta tipo "pill" */
 .etiqueta {
     display: inline-flex;
     align-items: center;
@@ -206,7 +201,6 @@ h1, h2, h3, p {
     color: #334155;
 }
 
-/* Estructura de páginas autenticadas */
 .barra {
     display: flex;
     align-items: center;
@@ -260,7 +254,6 @@ h1, h2, h3, p {
     color: var(--color-texto-secundario);
 }
 
-/* Aviso flotante (mensaje de bienvenida) */
 .aviso {
     position: fixed;
     top: 16px;

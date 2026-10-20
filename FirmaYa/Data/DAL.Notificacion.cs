@@ -2,15 +2,10 @@ using FirmaYa.Models.Entidades;
 
 namespace FirmaYa.Data;
 
-/// <summary>Operaciones de :DAL invocadas por :NotificacionBLL (CU-03, CU-05 a CU-09).</summary>
 public sealed partial class DAL
 {
     public Task RegistrarEnvioCorreo(Notificacion notificacion, CancellationToken ct) => InsertarNotificaciones([notificacion], ct);
 
-    /// <summary>
-    /// Partes del contrato que reciben avisos: las no bloqueadas, salvo los usuarios internos que desactivaron
-    /// el canal de correo en preferencia_notificacion. Las partes externas no tienen preferencias.
-    /// </summary>
     public Task<List<ParteContrato>> ObtenerPartesConNotificacionesActivas(int idContrato, CancellationToken ct) =>
         EjecutarConsulta((conexion, token) =>
             ListaAsync(Comando(SelectParte + """

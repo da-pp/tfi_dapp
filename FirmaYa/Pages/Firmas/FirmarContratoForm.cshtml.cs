@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FirmaYa.Pages.Firmas;
 
-/// <summary>Participante "FirmarContratoForm" del diagrama de secuencia del CU-08 Firmar contrato vía OTP.</summary>
 public class FirmarContratoForm(AccesoBLL accesoBLL, ContratoBLL contratoBLL, HoraLocal hora) : PageModel
 {
     public const string MensajeTokenInvalido =
@@ -29,24 +28,20 @@ public class FirmarContratoForm(AccesoBLL accesoBLL, ContratoBLL contratoBLL, Ho
     [BindProperty]
     public string? CodigoOTP { get; set; }
 
-    /// <summary>datosToken: la parte firmante.</summary>
     public ParteContrato? Firmante { get; private set; }
 
-    /// <summary>nombreContrato, versionAFirmar, hashVersion, contenidoCompleto</summary>
     public Contrato? DatosContrato { get; private set; }
 
     public Pasos Paso { get; private set; } = Pasos.Lectura;
     public string? Mensaje { get; private set; }
     public bool OtpExpirado { get; private set; }
 
-    /// <summary>clic en el enlace de firma (token) → validarTokenFirma(token), obtenerDatosParaFirma(token)</summary>
     public async Task<IActionResult> OnGetAsync(CancellationToken ct)
     {
         await Cargar(ct);
         return Page();
     }
 
-    /// <summary>clic "Leer y firmar el contrato" → generarYEnviarOTP(token)</summary>
     public async Task<IActionResult> OnPostEnviarOtpAsync(CancellationToken ct)
     {
         if (!await Cargar(ct))
@@ -63,7 +58,6 @@ public class FirmarContratoForm(AccesoBLL accesoBLL, ContratoBLL contratoBLL, Ho
         return Page();
     }
 
-    /// <summary>ingresar codigoOTP → validarOTP(token, codigoOTP); si es correcto → registrarFirma(...)</summary>
     public async Task<IActionResult> OnPostValidarOtpAsync(CancellationToken ct)
     {
         if (!await Cargar(ct))
@@ -98,14 +92,13 @@ public class FirmarContratoForm(AccesoBLL accesoBLL, ContratoBLL contratoBLL, Ho
         return Page();
     }
 
-    /// <summary>Valida el enlace y carga el contrato. Devuelve false si no se puede continuar con la firma.</summary>
     private async Task<bool> Cargar(CancellationToken ct)
     {
         var token = new TokenEnlace(Token);
         Firmante = await accesoBLL.ValidarTokenFirma(token, ct);
         if (Firmante is null)
         {
-            // Distingue el enlace bloqueado por intentos (camino C) del enlace inválido (camino "Token inválido").
+            // Distingue el enlace bloqueado por intentos fallidos del enlace inválido.
             var parte = await accesoBLL.ObtenerTokenAcceso(token, ct);
             Paso = Pasos.Error;
             Mensaje = parte?.EstadoInvitacion == EstadosInvitacion.Bloqueado ? MensajeBloqueado : MensajeTokenInvalido;

@@ -13,7 +13,6 @@
 
 @if (!estado.ExistenSolicitudes)
 {
-    @* alt [No hay solicitudes de firma enviadas] *@
     <section class="tarjeta">
         <p class="nota">@EstadoFirmasForm.MensajeSinSolicitudes</p>
         <div class="acciones" style="margin-top:14px">
@@ -25,7 +24,6 @@ else
 {
     @if (Model.ErrorReenvio is { } error)
     {
-        @* alt [Fallo en el reenvío] *@
         <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">
             <p class="alerta__texto">@EstadoFirmasForm.MensajeErrorReenvio</p>
             <div class="alerta__acciones">
@@ -105,7 +103,6 @@ else
 
 @section Scripts {
     <script>
-        // CU-09 paso 18: el panel se mantiene actualizado (se refresca si no hay diálogos ni avisos abiertos).
         if (document.querySelector(".tabla")) {
             setInterval(() => {
                 if (!document.querySelector(".modal") && !document.querySelector(".alerta--error")) window.location.reload();

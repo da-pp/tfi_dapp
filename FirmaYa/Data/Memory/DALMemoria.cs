@@ -3,12 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FirmaYa.Data.Memory;
 
-/// <summary>
-/// Implementación en memoria de :DAL para el modo DEMO (Persistence:Mode = Memory).
-/// Los datos se pierden al reiniciar y son los mismos que Data/Scripts/003_datos_prueba.sql.
-/// Este archivo contiene las "tablas"; las operaciones están en DALMemoria.[ClaseBLL].cs con la misma semántica que DAL.
-/// Todas las operaciones se ejecutan dentro de lock (_bloqueo), equivalente a una transacción.
-/// </summary>
+// Todas las operaciones se ejecutan dentro de lock (_bloqueo), equivalente a una transacción.
 public sealed partial class DALMemoria : IDAL
 {
     public const string ContrasenaDemo = "FirmaYa2026!";
@@ -109,7 +104,6 @@ public sealed partial class DALMemoria : IDAL
     private VersionContrato? VersionActual(int idContrato) =>
         _versiones.Where(v => v.IdContrato == idContrato).MaxBy(v => v.NumeroVersion);
 
-    /// <summary>Equivalente a SelectContrato: contrato + estado + creador + versión actual + transiciones.</summary>
     private Contrato? ArmarContrato(int idContrato)
     {
         var fila = _contratos.FirstOrDefault(c => c.IdContrato == idContrato);
@@ -140,7 +134,6 @@ public sealed partial class DALMemoria : IDAL
         };
     }
 
-    /// <summary>Equivalente a SelectParte (+ SelectParteConFirma).</summary>
     private ParteContrato ArmarParte(ParteContrato fila)
     {
         var parte = new ParteContrato
@@ -176,7 +169,6 @@ public sealed partial class DALMemoria : IDAL
     private ParteContrato? BuscarParte(TokenEnlace token) => _partes.FirstOrDefault(p => p.TokenInvitacion == token.Valor);
 }
 
-/// <summary>Plantillas de prueba (mismas que Data/Scripts/003_datos_prueba.sql).</summary>
 public static class PlantillasDemo
 {
     private const string Pie =

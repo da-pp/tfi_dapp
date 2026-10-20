@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\Daniel Andres Perez\\Desktop\\aspnet\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{1D524DE8-E739-47E0-B2D4-B6EA0C1EDE55}|FirmaYa\\FirmaYa.csproj|c:\\users\\daniel andres perez\\desktop\\aspnet\\firmaya\\pages\\contratos\\nuevocontratoform.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1D524DE8-E739-47E0-B2D4-B6EA0C1EDE55}|FirmaYa\\FirmaYa.csproj|solutionrelative:firmaya\\pages\\contratos\\nuevocontratoform.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1D524DE8-E739-47E0-B2D4-B6EA0C1EDE55}|FirmaYa\\FirmaYa.csproj|c:\\users\\daniel andres perez\\desktop\\aspnet\\firmaya\\app_data\\correos\\0c439880-dbcc-4843-9ce1-8b086b2f828b.eml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{1D524DE8-E739-47E0-B2D4-B6EA0C1EDE55}|FirmaYa\\FirmaYa.csproj|solutionrelative:firmaya\\app_data\\correos\\0c439880-dbcc-4843-9ce1-8b086b2f828b.eml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1D524DE8-E739-47E0-B2D4-B6EA0C1EDE55}|FirmaYa\\FirmaYa.csproj|c:\\users\\daniel andres perez\\desktop\\aspnet\\firmaya\\pages\\contratos\\nuevocontratoform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1D524DE8-E739-47E0-B2D4-B6EA0C1EDE55}|FirmaYa\\FirmaYa.csproj|solutionrelative:firmaya\\pages\\contratos\\nuevocontratoform.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -22,19 +30,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "NuevoContratoForm.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Daniel Andres Perez\\Desktop\\aspnet\\FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml.cs",
+              "RelativeDocumentMoniker": "FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml.cs",
+              "ToolTip": "C:\\Users\\Daniel Andres Perez\\Desktop\\aspnet\\FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml.cs",
+              "RelativeToolTip": "FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAuwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-20T20:15:49.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "0c439880-dbcc-4843-9ce1-8b086b2f828b.eml",
+              "DocumentMoniker": "C:\\Users\\Daniel Andres Perez\\Desktop\\aspnet\\FirmaYa\\App_Data\\correos\\0c439880-dbcc-4843-9ce1-8b086b2f828b.eml",
+              "RelativeDocumentMoniker": "FirmaYa\\App_Data\\correos\\0c439880-dbcc-4843-9ce1-8b086b2f828b.eml",
+              "ToolTip": "C:\\Users\\Daniel Andres Perez\\Desktop\\aspnet\\FirmaYa\\App_Data\\correos\\0c439880-dbcc-4843-9ce1-8b086b2f828b.eml",
+              "RelativeToolTip": "FirmaYa\\App_Data\\correos\\0c439880-dbcc-4843-9ce1-8b086b2f828b.eml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001861|",
+              "WhenOpened": "2026-10-20T20:15:27.638Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "NuevoContratoForm.cshtml",
               "DocumentMoniker": "C:\\Users\\Daniel Andres Perez\\Desktop\\aspnet\\FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml",
               "RelativeDocumentMoniker": "FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml",
               "ToolTip": "C:\\Users\\Daniel Andres Perez\\Desktop\\aspnet\\FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml",
               "RelativeToolTip": "FirmaYa\\Pages\\Contratos\\NuevoContratoForm.cshtml",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAADwAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAADwAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-10-20T19:52:08.619Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "secrets.json",
               "DocumentMoniker": "C:\\Users\\Daniel Andres Perez\\AppData\\Roaming\\Microsoft\\UserSecrets\\0b6c7a52-6a4e-4a8e-9a43-3f1d2c7e5b90\\secrets.json",
               "RelativeDocumentMoniker": "..\\..\\AppData\\Roaming\\Microsoft\\UserSecrets\\0b6c7a52-6a4e-4a8e-9a43-3f1d2c7e5b90\\secrets.json",
@@ -42,8 +76,7 @@
               "RelativeToolTip": "..\\..\\AppData\\Roaming\\Microsoft\\UserSecrets\\0b6c7a52-6a4e-4a8e-9a43-3f1d2c7e5b90\\secrets.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-10-20T19:42:07.931Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-20T19:42:07.931Z"
             }
           ]
         }

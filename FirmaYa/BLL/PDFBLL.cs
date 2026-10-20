@@ -6,16 +6,12 @@ using FirmaYa.Services;
 
 namespace FirmaYa.BLL;
 
-/// <summary>archivoPDF(nombreArchivo)</summary>
 public sealed record ArchivoPDF(string NombreArchivo, byte[] Contenido, int Version);
 
-/// <summary>Participante ":PDFBLL" del CU-10 — clase PDF del diagrama de clases.</summary>
 public sealed class PDFBLL(IDAL dal, HoraLocal hora)
 {
-    /// <summary>CU-10 paso 19.</summary>
     public const string Leyenda = "Documento con firma digital verificada por FirmaYA";
 
-    /// <summary>generarPDFFirmado(idContrato) → archivoPDF(nombreArchivo)</summary>
     public async Task<ArchivoPDF> GenerarPDFFirmado(int idContrato, string nombreContrato, CancellationToken ct)
     {
         var contenidoVersionFinal = await ObtenerContenidoVersionFinal(idContrato, ct)
@@ -32,7 +28,6 @@ public sealed class PDFBLL(IDAL dal, HoraLocal hora)
             contenidoVersionFinal.NumeroVersion);
     }
 
-    /// <summary>Camino alternativo "Descargar versión actual sin firmas" (contrato no Firmado).</summary>
     public async Task<ArchivoPDF> GenerarPDFSinFirmas(int idContrato, string nombreContrato, CancellationToken ct)
     {
         var contenidoVersionFinal = await ObtenerContenidoVersionFinal(idContrato, ct)
@@ -46,14 +41,11 @@ public sealed class PDFBLL(IDAL dal, HoraLocal hora)
             contenidoVersionFinal.NumeroVersion);
     }
 
-    /// <summary>obtenerContenidoVersionFinal(idContrato) → contenidoVersionFinal</summary>
     public Task<VersionContrato?> ObtenerContenidoVersionFinal(int idContrato, CancellationToken ct) =>
         dal.ObtenerContenidoVersionFinal(idContrato, ct);
 
-    /// <summary>obtenerDatosFirmas(idContrato) → datosFirmas(nombreFirmante, fechaHoraFirma, ipFirmante, hashVersion)</summary>
     public Task<List<DatosFirma>> ObtenerDatosFirmas(int idContrato, CancellationToken ct) => dal.ObtenerDatosFirmas(idContrato, ct);
 
-    /// <summary>compilarContenido(contenidoVersionFinal): encabezado y cuerpo de la versión final.</summary>
     public List<LineaPdf> CompilarContenido(string nombreContrato, VersionContrato contenidoVersionFinal)
     {
         var lineas = new List<LineaPdf>
@@ -71,7 +63,6 @@ public sealed class PDFBLL(IDAL dal, HoraLocal hora)
         return lineas;
     }
 
-    /// <summary>incorporarDatosFirma(datosFirmas): nombre, fecha y hora (DD/MM/AAAA HH:mm), IP y hash por firmante.</summary>
     public List<LineaPdf> IncorporarDatosFirma(List<DatosFirma> datosFirmas)
     {
         var lineas = new List<LineaPdf> { new("Datos de firma", Negrita: true, Tamano: 12, EspacioAntes: 20) };
@@ -87,11 +78,9 @@ public sealed class PDFBLL(IDAL dal, HoraLocal hora)
         return lineas;
     }
 
-    /// <summary>incorporarHashEnPiePagina(hashDocumentoCompleto): pie de cada página.</summary>
     public static Func<int, int, string[]> IncorporarHashEnPiePagina(string hashDocumentoCompleto) =>
         (pagina, total) => [$"Hash del documento: {hashDocumentoCompleto}", $"{Leyenda} · Página {pagina} de {total}"];
 
-    /// <summary>generarArchivo(nombreContrato, version) → [NombreDelContrato]_v[versión]_firmado.pdf</summary>
     public static string GenerarArchivo(string nombreContrato, int version, bool firmado)
     {
         var nombre = new StringBuilder();

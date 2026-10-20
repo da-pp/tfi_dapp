@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FirmaYa.Pages.Login;
 
-/// <summary>Cierra la sesión autenticada generada en el CU-19 (elimina la cookie).</summary>
 public class SalirModel : PageModel
 {
     public IActionResult OnGet() => RedirectToPage("/Index");

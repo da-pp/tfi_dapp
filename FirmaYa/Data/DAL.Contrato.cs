@@ -3,10 +3,8 @@ using Npgsql;
 
 namespace FirmaYa.Data;
 
-/// <summary>Operaciones de :DAL invocadas por :ContratoBLL (CU-01 a CU-10).</summary>
 public sealed partial class DAL
 {
-    // Contrato + estado + creador + versión actual + transiciones disponibles desde el estado actual.
     private const string SelectContrato = """
         SELECT c.id_contrato, c.id_usuario_creador, trim(concat_ws(' ', u.nombre, u.apellido)), u.email,
                c.id_estado, e.nombre, c.id_plantilla, c.nombre, c.descripcion_propiedad, c.fecha_inicio, c.fecha_expiracion,
@@ -34,7 +32,6 @@ public sealed partial class DAL
         LEFT JOIN usuario u ON u.id_usuario = p.id_usuario
         """;
 
-    // Parte + firma de la versión actual + IP de la firma (auditoría "Firma") + último envío de la solicitud de firma.
     // Los literales coinciden con TiposAccion.Firma, TiposNotificacion.SolicitudFirma y EstadosEnvio.Enviado.
     private const string SelectParteConFirma = """
         SELECT p.id_parte, p.id_usuario, p.id_contrato, p.rol_parte, p.correo_invitado, p.estado_invitacion,
@@ -58,11 +55,8 @@ public sealed partial class DAL
             LIMIT 1) f ON TRUE
         """;
 
-    // Subconsulta reutilizable: id_version de la versión actual del contrato $1.
     private const string VersionActual =
         "(SELECT id_version FROM version_contrato WHERE id_contrato = $1 ORDER BY numero_version DESC LIMIT 1)";
-
-    // ================= CU-01 Crear contrato desde plantilla =================
 
     public Task<int> GuardarContrato(Contrato contrato, string estado, int version, string hash, string contenidoVersion1,
         int usuarioCreador, DateTime fechaHora, CancellationToken ct) =>
@@ -86,8 +80,6 @@ public sealed partial class DAL
                 idContrato, usuarioCreador, version, contenidoVersion1, hash, fechaHora), token);
             return idContrato;
         }, ct);
-
-    // ================= CU-02 Editar contrato en línea =================
 
     public Task<Contrato?> ObtenerContrato(int idContrato, CancellationToken ct) =>
         EjecutarConsulta((conexion, token) =>
@@ -119,8 +111,6 @@ public sealed partial class DAL
                 fechaHora, null, descripcion, token);
         }, ct);
 
-    // ================= CU-03 Invitar a las partes al contrato =================
-
     public Task<List<ParteContrato>> ObtenerPartesInvitadas(int idContrato, CancellationToken ct) =>
         EjecutarConsulta((conexion, token) =>
             ListaAsync(Comando(SelectParte + " WHERE p.id_contrato = $1 ORDER BY p.id_parte", conexion, null, idContrato),
@@ -136,7 +126,6 @@ public sealed partial class DAL
             return (bool)(await EscalarAsync(Comando(sql, conexion, null, idContrato, correoElectronico), token))!;
         }, ct);
 
-    /// <summary>Si el correo pertenece a un usuario interno, la parte queda vinculada a él (id_usuario).</summary>
     public Task<int> RegistrarParteInvitada(int idContrato, string correoElectronico, string rol, string token,
         string estadoInvitacion, DateTime fechaHora, CancellationToken ct) =>
         EjecutarModificacion(async (conexion, transaccion, cancelacion) =>
@@ -158,15 +147,11 @@ public sealed partial class DAL
                 WHERE id_contrato = $1 AND lower(correo_invitado) = lower($2)
                 """, conexion, transaccion, idContrato, correoElectronico, estado), token), ct);
 
-    // ================= CU-04 Ver contrato como parte invitada =================
-
     public Task<Contrato?> ObtenerContrato(TokenEnlace token, CancellationToken ct) =>
         EjecutarConsulta((conexion, cancelacion) =>
             PrimeroAsync(Comando(SelectContrato + """
                  WHERE c.id_contrato = (SELECT id_contrato FROM usuario_contrato WHERE token_invitacion = $1)
                 """, conexion, null, token.Valor), LeerContrato, cancelacion), ct);
-
-    // ================= CU-05 Cambiar estado del contrato =================
 
     public Task<bool> ExisteFirmanteAsignado(int idContrato, CancellationToken ct) =>
         EjecutarConsulta(async (conexion, token) =>
@@ -190,8 +175,6 @@ public sealed partial class DAL
             return InsertarAuditoriaAsync(conexion, transaccion, usuario, TiposAccion.CambioEstado, "contrato", idContrato,
                 fechaHora, null, descripcion, token);
         }, ct);
-
-    // ================= CU-06 Añadir comentarios y observaciones =================
 
     public Task<string?> ObtenerRolUsuario(int idContrato, int usuario, CancellationToken ct) =>
         EjecutarConsulta(async (conexion, token) =>
@@ -236,14 +219,11 @@ public sealed partial class DAL
                     FechaPublicacion = FechaUtc(lector, 5) ?? DateTime.MinValue
                 }, token), ct);
 
-    // ================= CU-07 Solicitar firma de las partes =================
-
     public Task<List<ParteContrato>> ObtenerFirmantes(int idContrato, CancellationToken ct) =>
         EjecutarConsulta((conexion, token) =>
             ListaAsync(Comando(SelectParteConFirma + " WHERE p.id_contrato = $1 AND p.rol_parte = $2 ORDER BY p.id_parte",
                 conexion, null, idContrato, RolesParte.Firmante), LeerParteConFirma, token), ct);
 
-    /// <summary>Crea la firma Pendiente de la versión actual (si no existe) y registra la solicitud en auditoría.</summary>
     public Task RegistrarSolicitudFirma(int idContrato, int firmante, DateTime fechaHora, string canalNotificacion,
         DateOnly? fechaLimiteFirma, int usuario, CancellationToken ct) =>
         EjecutarModificacion(async (conexion, transaccion, token) =>
@@ -267,11 +247,8 @@ public sealed partial class DAL
         EjecutarModificacion((conexion, transaccion, token) =>
             ActualizarEstadoFirmanteAsync(conexion, transaccion, idContrato, firmante, estado, token), ct);
 
-    // ================= CU-08 Firmar contrato vía OTP =================
-
     public Task<Contrato?> ObtenerContratoPorToken(TokenEnlace token, CancellationToken ct) => ObtenerContrato(token, ct);
 
-    /// <summary>Guarda fecha y hash de la firma, marca el OTP como usado y registra la firma (con la IP) en auditoría.</summary>
     public Task RegistrarFirma(int idContrato, int firmante, DateTime fechaHora, string? ip, int versionContrato,
         string hashVersion, string hashFirma, CancellationToken ct) =>
         EjecutarModificacion(async (conexion, transaccion, token) =>
@@ -317,8 +294,6 @@ public sealed partial class DAL
             return (bool)(await EscalarAsync(Comando(sql, conexion, null, idContrato, RolesParte.Firmante, EstadosFirma.Firmado), token))!;
         }, ct);
 
-    // ================= CU-09 Consultar estado de firmas pendientes =================
-
     public Task<bool> ExistenSolicitudesFirma(int idContrato, CancellationToken ct) =>
         EjecutarConsulta(async (conexion, token) =>
             (bool)(await EscalarAsync(Comando("""
@@ -329,7 +304,6 @@ public sealed partial class DAL
 
     public Task<List<ParteContrato>> ObtenerFirmantesConEstado(int idContrato, CancellationToken ct) => ObtenerFirmantes(idContrato, ct);
 
-    /// <summary>Actualiza el estado del firmante y registra el reenvío (fecha y hora) en auditoría.</summary>
     public Task ActualizarEstadoFirmante(int idContrato, int firmante, string estado, DateTime fechaHora, int usuario,
         CancellationToken ct) =>
         EjecutarModificacion(async (conexion, transaccion, token) =>
@@ -338,8 +312,6 @@ public sealed partial class DAL
             return await InsertarAuditoriaAsync(conexion, transaccion, usuario, TiposAccion.ReenvioSolicitudFirma,
                 "usuario_contrato", firmante, fechaHora, null, $"Estado del firmante: {estado}.", token);
         }, ct);
-
-    // ================= CU-10 Descargar contrato firmado en PDF =================
 
     public Task<(Contrato? DatosContrato, bool AccesoUsuario)> ObtenerContrato(int idContrato, int usuario, CancellationToken ct) =>
         EjecutarConsulta<(Contrato? DatosContrato, bool AccesoUsuario)>(async (conexion, token) =>
@@ -363,8 +335,6 @@ public sealed partial class DAL
             InsertarAuditoriaAsync(conexion, transaccion, usuario, accion, "contrato", idContrato, fechaHora, null,
                 descripcion ?? $"Versión v{version}.", token), ct);
 
-    // ================= Panel principal =================
-
     public Task<List<Contrato>> ObtenerContratosPorUsuario(int usuario, CancellationToken ct) =>
         EjecutarConsulta((conexion, token) =>
             ListaAsync(Comando(SelectContrato + """
@@ -372,8 +342,6 @@ public sealed partial class DAL
                     OR EXISTS (SELECT 1 FROM usuario_contrato p WHERE p.id_contrato = c.id_contrato AND p.id_usuario = $1)
                  ORDER BY v.fecha_creacion DESC NULLS LAST, c.id_contrato DESC
                 """, conexion, null, usuario), LeerContrato, token), ct);
-
-    // ================= Auxiliares =================
 
     private static Task<int> ActualizarEstadoFirmanteAsync(NpgsqlConnection conexion, NpgsqlTransaction transaccion,
         int idContrato, int firmante, string estado, CancellationToken ct)

@@ -6,10 +6,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FirmaYa.Pages.Contratos;
 
-/// <summary>
-/// Participante "DescargarPDFForm" del diagrama de secuencia del CU-10 Descargar contrato firmado en PDF.
-/// Acceso con sesión interna (idContrato) o con el enlace tokenizado de la parte invitada (token).
-/// </summary>
 public class DescargarPDFForm(ContratoBLL contratoBLL, AccesoBLL accesoBLL, PDFBLL pdfBLL, HoraLocal hora,
     ILogger<DescargarPDFForm> logger) : PageModel
 {
@@ -20,7 +16,6 @@ public class DescargarPDFForm(ContratoBLL contratoBLL, AccesoBLL accesoBLL, PDFB
     [BindProperty(SupportsGet = true)] public int? IdContrato { get; set; }
     [BindProperty(SupportsGet = true)] public string? Token { get; set; }
 
-    /// <summary>datosContrato (estadoContrato)</summary>
     public Contrato? DatosContrato { get; private set; }
 
     public bool EsTitular { get; private set; }
@@ -30,7 +25,6 @@ public class DescargarPDFForm(ContratoBLL contratoBLL, AccesoBLL accesoBLL, PDFB
     private int? _usuarioAuditoria;
     private string? _detalleAuditoria;
 
-    /// <summary>clic "Descargar PDF" → verificarAccesoYEstado(idContrato, usuario)</summary>
     public async Task<IActionResult> OnGetAsync(CancellationToken ct)
     {
         if (!await VerificarAccesoYEstado(ct))
@@ -38,10 +32,6 @@ public class DescargarPDFForm(ContratoBLL contratoBLL, AccesoBLL accesoBLL, PDFB
         return Page();
     }
 
-    /// <summary>
-    /// alt [Usuario tiene acceso y contrato en estado "Firmado"] → generarPDFFirmado(idContrato), transferencia del archivo
-    /// y registrarDescarga(idContrato, usuario, fecha, hora, version). Con sinFirmas: "Descargar versión actual sin firmas".
-    /// </summary>
     public async Task<IActionResult> OnGetArchivoAsync(bool sinFirmas, CancellationToken ct)
     {
         if (!await VerificarAccesoYEstado(ct))
@@ -58,7 +48,6 @@ public class DescargarPDFForm(ContratoBLL contratoBLL, AccesoBLL accesoBLL, PDFB
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            // alt [Error en la generación del PDF]
             logger.LogError(ex, "Error al generar el PDF del contrato {IdContrato}.", DatosContrato!.IdContrato);
             return StatusCode(StatusCodes.Status500InternalServerError, MensajeErrorGeneracion);
         }
@@ -74,7 +63,6 @@ public class DescargarPDFForm(ContratoBLL contratoBLL, AccesoBLL accesoBLL, PDFB
     {
         if (!string.IsNullOrEmpty(Token))
         {
-            // Parte externa: sesión a través del token (CU-04 paso 18).
             var token = new TokenEnlace(Token);
             var parte = await accesoBLL.ValidarToken(token, ct);
             if (parte is null)

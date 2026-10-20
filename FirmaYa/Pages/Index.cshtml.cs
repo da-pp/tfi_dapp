@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace FirmaYa.Pages;
 
-/// <summary>Raíz del sitio: envía al panel del rol autenticado o a LoginForm.</summary>
 public class IndexModel : PageModel
 {
     public async Task<IActionResult> OnGetAsync()

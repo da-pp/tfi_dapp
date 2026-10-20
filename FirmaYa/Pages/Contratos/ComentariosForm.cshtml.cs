@@ -5,12 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FirmaYa.Pages.Contratos;
 
-/// <summary>Participante "ComentariosForm" del diagrama de secuencia del CU-06 Añadir comentarios y observaciones.</summary>
 public class ComentariosForm(ContratoBLL contratoBLL) : ContratoPageModel
 {
     public const string MensajeSoloLectura = "No puede añadir comentarios con su rol actual.";
 
-    /// <summary>rolUsuario</summary>
     public string? RolUsuario { get; private set; }
 
     public List<Comentario> Comentarios { get; private set; } = [];
@@ -20,17 +18,14 @@ public class ComentariosForm(ContratoBLL contratoBLL) : ContratoPageModel
 
     public string? Error { get; private set; }
 
-    /// <summary>alt [Rol permite comentar] y el contrato no está archivado.</summary>
     public bool PuedeComentar => ContratoBLL.RolPermiteComentar(RolUsuario) && Contrato?.Estado != EstadosContrato.Archivado;
 
-    /// <summary>accede al contrato en modo vista o edición → obtenerRolUsuario(idContrato, usuario)</summary>
     public async Task<IActionResult> OnGetAsync(CancellationToken ct)
     {
         await Cargar(ct);
         return Page();
     }
 
-    /// <summary>clic "Publicar comentario" → publicarComentario(idContrato, autor, textoComentario, fragmentoReferenciado)</summary>
     public async Task<IActionResult> OnPostAsync(CancellationToken ct)
     {
         switch (await contratoBLL.PublicarComentario(IdContrato, Usuario, TextoComentario, FragmentoReferenciado, ct))

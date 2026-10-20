@@ -1,4 +1,3 @@
-// CU-02 Editar contrato en línea: barra de formato, borrador local, validación y salida sin guardar.
 (() => {
     const formulario = document.getElementById("form-editor");
     if (!formulario) return;
@@ -20,7 +19,6 @@
     // Después de guardar una versión, el borrador de esa versión ya no sirve.
     if (formulario.dataset.guardado) borrarBorrador();
 
-    // Paso 10: los cambios se registran en tiempo real sin persistirlos (borrador local del navegador).
     const borrador = leerBorrador();
     if (borrador !== null && borrador !== original && !formulario.dataset.guardado) {
         area.value = borrador;
@@ -34,7 +32,6 @@
         FirmaYa.marcarCampo(area, null);
     });
 
-    // Barra de formato: marcas livianas que luego se muestran con formato y se limpian en el PDF.
     const formatos = {
         negrita: (texto) => `**${texto || "texto"}**`,
         cursiva: (texto) => `_${texto || "texto"}_`,
@@ -54,7 +51,6 @@
         });
     });
 
-    // Pasos 14 y 15: el cuerpo no puede estar vacío y debe tener al menos 100 caracteres.
     formulario.addEventListener("submit", (evento) => {
         if (area.value.trim().length < MINIMO) {
             evento.preventDefault();
@@ -65,7 +61,6 @@
         enviando = true;
     });
 
-    // Camino alternativo "Usuario intenta salir sin guardar".
     document.addEventListener("click", async (evento) => {
         const enlace = evento.target.closest("a[href]");
         if (!enlace || !hayCambios() || enlace.target === "_blank") return;

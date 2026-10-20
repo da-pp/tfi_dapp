@@ -4,14 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace FirmaYa.Models;
 
-/// <summary>
-/// Formato liviano del contenido del contrato que inserta la barra del editor (CU-02):
-/// "# " título, "- " lista, "> " cita, **negrita** y _cursiva_. El contenido se guarda como texto plano
-/// (es lo que se hashea); este formato solo se aplica al mostrarlo o al generar el PDF.
-/// </summary>
 public static partial class FormatoContenido
 {
-    /// <summary>HTML seguro: primero se codifica todo el texto y recién después se aplican las marcas.</summary>
+    // HTML seguro: primero se codifica todo el texto y recién después se aplican las marcas.
     public static string AHtml(string? contenido)
     {
         var html = new StringBuilder();
@@ -31,7 +26,6 @@ public static partial class FormatoContenido
         return html.ToString();
     }
 
-    /// <summary>Texto sin marcas, para el PDF. Devuelve (texto, esTitulo) por línea.</summary>
     public static IEnumerable<(string Texto, bool EsTitulo)> ATexto(string? contenido)
     {
         foreach (var linea in (contenido ?? "").Replace("\r", "").Split('\n'))

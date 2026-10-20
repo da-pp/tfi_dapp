@@ -1,6 +1,5 @@
 namespace FirmaYa.Models.Entidades;
 
-/// <summary>Tabla plantilla del DER. Es el "datosPlantilla" del CU-01.</summary>
 public sealed class Plantilla
 {
     public int IdPlantilla { get; set; }
@@ -18,7 +17,6 @@ public static class EstadosPlantilla
     public const string Inactiva = "Inactiva";
 }
 
-/// <summary>Valores de plantilla.tipo_contrato (CU-01 paso 3, CU-16 paso 6).</summary>
 public static class TiposContrato
 {
     public static readonly string[] Todos = ["Arrendamiento", "Venta", "Mandato", "Otro"];

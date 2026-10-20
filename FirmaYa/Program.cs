@@ -26,14 +26,12 @@ builder.Services.AddRazorPages(opciones =>
     opciones.Conventions.AllowAnonymousToPage("/Error");
     opciones.Conventions.AllowAnonymousToFolder("/Login");
 
-    // Contratos (CU-01 a CU-10) y CU-22: exclusivos de Abogado y Agente Inmobiliario.
     opciones.Conventions.AuthorizeFolder("/Dashboard", PoliticaPanelContratos);
     opciones.Conventions.AuthorizeFolder("/Contratos", PoliticaPanelContratos);
     opciones.Conventions.AuthorizeFolder("/Invitaciones", PoliticaPanelContratos);
     opciones.Conventions.AuthorizeFolder("/Firmas", PoliticaPanelContratos);
     opciones.Conventions.AuthorizeFolder("/Administrador", PoliticaAdministrador);
 
-    // Acceso externo por enlace tokenizado (CU-04, CU-08) y descarga del PDF por la parte invitada (CU-10).
     opciones.Conventions.AllowAnonymousToPage("/Invitaciones/VerContratoForm");
     opciones.Conventions.AllowAnonymousToPage("/Firmas/FirmarContratoForm");
     opciones.Conventions.AllowAnonymousToPage("/Contratos/DescargarPDFForm");
@@ -60,7 +58,6 @@ builder.Services.AddAuthorization(opciones =>
     opciones.AddPolicy(PoliticaAdministrador, p => p.RequireRole(Roles.Administrador));
 });
 
-// Servicios de apoyo
 builder.Services.Configure<AplicacionOptions>(builder.Configuration.GetSection("Aplicacion"));
 builder.Services.Configure<CorreoOptions>(builder.Configuration.GetSection("Correo"));
 builder.Services.AddHttpContextAccessor();
@@ -69,7 +66,6 @@ builder.Services.AddSingleton<HoraLocal>();
 builder.Services.AddSingleton<CorreoService>();
 builder.Services.AddScoped<Enlaces>();
 
-// BLL (participantes ":XxxBLL" de los diagramas de secuencia)
 builder.Services.Configure<AccesoOptions>(builder.Configuration.GetSection("Acceso"));
 builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 builder.Services.AddScoped<AccesoBLL>();
@@ -79,7 +75,7 @@ builder.Services.AddScoped<NotificacionBLL>();
 builder.Services.AddScoped<PDFBLL>();
 builder.Services.AddScoped<DashboardBLL>();
 
-// DAL: Supabase (PostgreSQL) o memoria, según Persistence:Mode. No hay cambio automático entre modos.
+// Supabase o memoria según Persistence:Mode; no hay cambio automático entre modos.
 var modoPersistencia = builder.Configuration["Persistence:Mode"];
 if (string.Equals(modoPersistencia, "Supabase", StringComparison.OrdinalIgnoreCase))
 {

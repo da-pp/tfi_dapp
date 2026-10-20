@@ -2,7 +2,6 @@ using FirmaYa.Models.Entidades;
 
 namespace FirmaYa.Data.Memory;
 
-/// <summary>Operaciones de :DAL invocadas por :NotificacionBLL y :PDFBLL, con la misma semántica que DAL.Notificacion.cs y DAL.PDF.cs.</summary>
 public sealed partial class DALMemoria
 {
     public Task RegistrarEnvioCorreo(Notificacion notificacion, CancellationToken ct) => InsertarNotificaciones([notificacion]);
@@ -30,8 +29,6 @@ public sealed partial class DALMemoria
     public Task RegistrarEnvioOTP(Notificacion notificacion, CancellationToken ct) => InsertarNotificaciones([notificacion]);
 
     public Task EnviarNotificacionContratoFirmado(Notificacion notificacion, CancellationToken ct) => InsertarNotificaciones([notificacion]);
-
-    // ================= PDFBLL (CU-10) =================
 
     public Task<VersionContrato?> ObtenerContenidoVersionFinal(int idContrato, CancellationToken ct)
     {

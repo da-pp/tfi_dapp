@@ -13,21 +13,16 @@ public sealed class AccesoOptions
     public int DuracionSesionMinutos { get; set; } = 60;
 }
 
-/// <summary>Respuestas de AccesoBLL.autenticar hacia LoginForm en el diagrama de secuencia del CU-19.</summary>
 public abstract record ResultadoAutenticacion;
 
-/// <summary>sesionAutenticada(nombreUsuario, rolUsuario)</summary>
 public sealed record SesionAutenticada(
     string NombreUsuario, string RolUsuario, ClaimsPrincipal DatosSesion, DateTime FechaExpiracion)
     : ResultadoAutenticacion;
 
-/// <summary>credencialesInvalidas, intentosFallidos</summary>
 public sealed record CredencialesInvalidas(int IntentosFallidos) : ResultadoAutenticacion;
 
-/// <summary>Rama alt [Intentos fallidos = 5] o bloqueo todavía vigente.</summary>
 public sealed record CuentaBloqueada : ResultadoAutenticacion;
 
-/// <summary>Respuestas de AccesoBLL.validarOTP hacia FirmarContratoForm (CU-08).</summary>
 public enum ResultadoValidacionOTP
 {
     Correcto,
@@ -37,15 +32,8 @@ public enum ResultadoValidacionOTP
     EnlaceBloqueado
 }
 
-/// <summary>resultadoValidacionOTP + intentosRestantes(N)</summary>
 public sealed record ValidacionOTP(ResultadoValidacionOTP Resultado, int IntentosRestantes = 0);
 
-/// <summary>
-/// Participante ":AccesoBLL" de los diagramas de secuencia — clase Acceso del diagrama de clases.
-/// CU-19: autenticar, obtenerUsuarioPorCorreo, registrarInicioSesion, generarSesion, incrementarIntentosFallidos, bloquearCuenta.
-/// CU-04: validarToken, registrarAcceso, renovarToken.
-/// CU-08: validarTokenFirma, generarYEnviarOTP, generarCodigoOTP, validarOTP, incrementarIntentosFallidos(token).
-/// </summary>
 public sealed class AccesoBLL(
     IDAL dal,
     IPasswordHasher<Usuario> hasher,
@@ -53,11 +41,9 @@ public sealed class AccesoBLL(
     TimeProvider reloj,
     NotificacionBLL notificacionBLL)
 {
-    /// <summary>CU-19, camino alternativo "Credenciales incorrectas y bloqueo por intentos", paso D.</summary>
     public const int MaxIntentosFallidos = 5;
     public const int DuracionBloqueoMinutos = 15;
 
-    /// <summary>CU-08: código de 6 dígitos que expira a los 10 minutos; 3 intentos fallidos bloquean el enlace.</summary>
     public const int MinutosExpiracionOTP = 10;
     public const int MaxIntentosOTP = 3;
 
@@ -67,7 +53,6 @@ public sealed class AccesoBLL(
     private static readonly Lazy<string> HashFicticio =
         new(() => new PasswordHasher<Usuario>().HashPassword(UsuarioFicticio, Guid.NewGuid().ToString()));
 
-    /// <summary>autenticar(correoElectronico, contrasenia) — pasos 15 a 18 del flujo principal.</summary>
     public async Task<ResultadoAutenticacion> Autenticar(
         string correoElectronico, string contrasenia, string? ip, CancellationToken ct)
     {
@@ -83,44 +68,36 @@ public sealed class AccesoBLL(
         if (BloqueoVigente(datosUsuario, ahora))
             return new CuentaBloqueada();
 
-        // Paso 15: la cuenta existe y está activa. Una cuenta Inactiva no suma intentos fallidos.
+        // Una cuenta Inactiva no suma intentos: si no, al vencer el bloqueo quedaría Activa.
         if (!CuentaActiva(datosUsuario))
             return new CredencialesInvalidas(0);
 
-        // Paso 16: alt [Correo no existe o contraseña incorrecta].
         if (!ContraseniaCorrecta(datosUsuario, contrasenia))
         {
             var intentosFallidos = await IncrementarIntentosFallidos(correoElectronico, ct);
             if (intentosFallidos < MaxIntentosFallidos)
                 return new CredencialesInvalidas(intentosFallidos);
 
-            // alt [Intentos fallidos = 5]
             await BloquearCuenta(correoElectronico, DuracionBloqueoMinutos, ct);
             return new CuentaBloqueada();
         }
 
-        // alt [Cuenta existe, activa y contraseña correcta]: pasos 17 y 18.
         await RegistrarInicioSesion(correoElectronico, ahora, ip, ct);
         return GenerarSesion(datosUsuario, ahora);
     }
 
-    /// <summary>obtenerUsuarioPorCorreo(correoElectronico) → datosUsuario</summary>
     public Task<Usuario?> ObtenerUsuarioPorCorreo(string correoElectronico, CancellationToken ct) =>
         dal.ObtenerUsuarioPorCorreo(correoElectronico, ct);
 
-    /// <summary>registrarInicioSesion(correoElectronico, fecha, hora, ip) — paso 17.</summary>
     public Task RegistrarInicioSesion(string correoElectronico, DateTime fechaHora, string? ip, CancellationToken ct) =>
         dal.RegistrarInicioSesion(correoElectronico, fechaHora, ip, ct);
 
-    /// <summary>incrementarIntentosFallidos(correoElectronico) → intentosFallidos</summary>
     public Task<int> IncrementarIntentosFallidos(string correoElectronico, CancellationToken ct) =>
         dal.IncrementarIntentosFallidos(correoElectronico, ct);
 
-    /// <summary>bloquearCuenta(correoElectronico, duracionMinutos=15)</summary>
     public Task BloquearCuenta(string correoElectronico, int duracionMinutos, CancellationToken ct) =>
         dal.BloquearCuenta(correoElectronico, duracionMinutos, ct);
 
-    /// <summary>generarSesion(datosUsuario) — paso 18. Arma los datos de la sesión autenticada (cookie).</summary>
     public SesionAutenticada GenerarSesion(Usuario datosUsuario, DateTime ahora)
     {
         Claim[] claims =
@@ -141,12 +118,7 @@ public sealed class AccesoBLL(
             ahora.AddMinutes(opciones.Value.DuracionSesionMinutos));
     }
 
-    // ================= CU-04 Ver contrato como parte invitada =================
-
-    /// <summary>
-    /// validarToken(token) → resultadoValidacionToken. Devuelve la parte (datosToken) si el token existe y no fue bloqueado;
-    /// null si es inválido. El DER no define vencimiento por tiempo para usuario_contrato.token_invitacion.
-    /// </summary>
+    // El DER no define vencimiento por tiempo para usuario_contrato.token_invitacion.
     public async Task<ParteContrato?> ValidarToken(TokenEnlace token, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(token.Valor))
@@ -155,14 +127,11 @@ public sealed class AccesoBLL(
         return datosToken is null || datosToken.EstadoInvitacion == EstadosInvitacion.Bloqueado ? null : datosToken;
     }
 
-    /// <summary>obtenerTokenAcceso(token) → datosToken</summary>
     public Task<ParteContrato?> ObtenerTokenAcceso(TokenEnlace token, CancellationToken ct) => dal.ObtenerTokenAcceso(token, ct);
 
-    /// <summary>registrarAcceso(token, fecha, hora, ip) → accesoRegistrado</summary>
     public Task RegistrarAcceso(TokenEnlace token, DateTime fechaHora, string? ip, CancellationToken ct) =>
         dal.RegistrarAcceso(token, fechaHora, ip, ct);
 
-    /// <summary>renovarToken(token) → tokenRenovado</summary>
     public async Task<bool> RenovarToken(TokenEnlace token, CancellationToken ct)
     {
         if (await ValidarToken(token, ct) is null)
@@ -171,12 +140,6 @@ public sealed class AccesoBLL(
         return true;
     }
 
-    // ================= CU-08 Firmar contrato vía OTP =================
-
-    /// <summary>
-    /// validarTokenFirma(token) → resultadoValidacionToken. Válido si el enlace existe, no está bloqueado
-    /// y pertenece a una parte con rol Firmante.
-    /// </summary>
     public async Task<ParteContrato?> ValidarTokenFirma(TokenEnlace token, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(token.Valor))
@@ -189,7 +152,6 @@ public sealed class AccesoBLL(
             : datosToken;
     }
 
-    /// <summary>generarYEnviarOTP(token) → otpEnviado. Registra el OTP (hasheado) y lo envía al correo del firmante.</summary>
     public async Task<bool> GenerarYEnviarOTP(TokenEnlace token, CancellationToken ct)
     {
         var firmante = await ValidarTokenFirma(token, ct);
@@ -202,10 +164,8 @@ public sealed class AccesoBLL(
         return await notificacionBLL.EnviarCodigoOTP(firmante.CorreoInvitado, codigoOTP, firmante.IdContrato, ct);
     }
 
-    /// <summary>generarCodigoOTP(): 6 dígitos numéricos con generador criptográfico.</summary>
     public static string GenerarCodigoOTP() => RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6");
 
-    /// <summary>validarOTP(token, codigoOTP) → resultadoValidacionOTP (y intentosRestantes si es incorrecto).</summary>
     public async Task<ValidacionOTP> ValidarOTP(TokenEnlace token, string? codigoOTP, CancellationToken ct)
     {
         if (codigoOTP is null || codigoOTP.Length != 6 || !codigoOTP.All(char.IsAsciiDigit))
@@ -229,7 +189,6 @@ public sealed class AccesoBLL(
             : new ValidacionOTP(ResultadoValidacionOTP.Incorrecto, intentosRestantes);
     }
 
-    /// <summary>incrementarIntentosFallidos(token) → intentosRestantes(N). Con 3 fallos consecutivos el enlace se bloquea.</summary>
     public Task<int> IncrementarIntentosFallidos(TokenEnlace token, CancellationToken ct) =>
         dal.IncrementarIntentosFallidos(token, MaxIntentosOTP, reloj.GetUtcNow().UtcDateTime, ct);
 

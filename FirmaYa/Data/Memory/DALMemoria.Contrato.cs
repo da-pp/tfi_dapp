@@ -2,11 +2,8 @@ using FirmaYa.Models.Entidades;
 
 namespace FirmaYa.Data.Memory;
 
-/// <summary>Operaciones de :DAL invocadas por :PlantillaBLL y :ContratoBLL, con la misma semántica que DAL.Plantilla.cs y DAL.Contrato.cs.</summary>
 public sealed partial class DALMemoria
 {
-    // ================= CU-01 =================
-
     public Task<List<Plantilla>> ObtenerPlantillasActivas(CancellationToken ct)
     {
         lock (_bloqueo)
@@ -54,8 +51,6 @@ public sealed partial class DALMemoria
         }
     }
 
-    // ================= CU-02 =================
-
     public Task<Contrato?> ObtenerContrato(int idContrato, CancellationToken ct)
     {
         lock (_bloqueo)
@@ -95,8 +90,6 @@ public sealed partial class DALMemoria
         }
         return Task.CompletedTask;
     }
-
-    // ================= CU-03 =================
 
     public Task<List<ParteContrato>> ObtenerPartesInvitadas(int idContrato, CancellationToken ct)
     {
@@ -143,8 +136,6 @@ public sealed partial class DALMemoria
         return Task.CompletedTask;
     }
 
-    // ================= CU-04 =================
-
     public Task<Contrato?> ObtenerContrato(TokenEnlace token, CancellationToken ct)
     {
         lock (_bloqueo)
@@ -153,8 +144,6 @@ public sealed partial class DALMemoria
             return Task.FromResult(parte is null ? null : ArmarContrato(parte.IdContrato));
         }
     }
-
-    // ================= CU-05 =================
 
     public Task<bool> ExisteFirmanteAsignado(int idContrato, CancellationToken ct)
     {
@@ -184,8 +173,6 @@ public sealed partial class DALMemoria
         }
         return Task.CompletedTask;
     }
-
-    // ================= CU-06 =================
 
     public Task<string?> ObtenerRolUsuario(int idContrato, int usuario, CancellationToken ct)
     {
@@ -235,8 +222,6 @@ public sealed partial class DALMemoria
                 }).ToList());
     }
 
-    // ================= CU-07 =================
-
     public Task<List<ParteContrato>> ObtenerFirmantes(int idContrato, CancellationToken ct)
     {
         lock (_bloqueo)
@@ -272,8 +257,6 @@ public sealed partial class DALMemoria
             ActualizarEstadoFirmanteInterno(idContrato, firmante, estado);
         return Task.CompletedTask;
     }
-
-    // ================= CU-08 =================
 
     public Task<Contrato?> ObtenerContratoPorToken(TokenEnlace token, CancellationToken ct) => ObtenerContrato(token, ct);
 
@@ -316,8 +299,6 @@ public sealed partial class DALMemoria
         }
     }
 
-    // ================= CU-09 =================
-
     public Task<bool> ExistenSolicitudesFirma(int idContrato, CancellationToken ct)
     {
         lock (_bloqueo)
@@ -338,8 +319,6 @@ public sealed partial class DALMemoria
         return Task.CompletedTask;
     }
 
-    // ================= CU-10 =================
-
     public Task<(Contrato? DatosContrato, bool AccesoUsuario)> ObtenerContrato(int idContrato, int usuario, CancellationToken ct)
     {
         lock (_bloqueo)
@@ -358,8 +337,6 @@ public sealed partial class DALMemoria
             InsertarAuditoria(usuario, accion, "contrato", idContrato, fechaHora, null, descripcion ?? $"Versión v{version}.");
         return Task.CompletedTask;
     }
-
-    // ================= Panel principal =================
 
     public Task<List<Contrato>> ObtenerContratosPorUsuario(int usuario, CancellationToken ct)
     {

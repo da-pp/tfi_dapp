@@ -95,7 +95,6 @@ else
 
 @section Scripts {
     <script>
-        // CU-08 pasos 8 y 9: "Leer y firmar el contrato" se habilita al llegar al final del documento.
         (() => {
             const lectura = document.getElementById("lectura");
             const boton = document.getElementById("leer-y-firmar");
@@ -110,7 +109,6 @@ else
                 revisar();
             }
 
-            // Paso 14: exactamente 6 dígitos numéricos.
             const codigo = document.getElementById("codigo");
             if (codigo) {
                 codigo.addEventListener("input", () => { codigo.value = codigo.value.replace(/\D/g, "").slice(0, 6); });

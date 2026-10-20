@@ -2,7 +2,6 @@ using System.Security.Claims;
 
 namespace FirmaYa.Models.Entidades;
 
-/// <summary>Usuario interno autenticado (cookie del CU-19). Es el "usuario" / "autor" de los diagramas.</summary>
 public sealed record UsuarioActual(int IdUsuario, string NombreCompleto, string Rol)
 {
     public static UsuarioActual? Desde(ClaimsPrincipal principal) =>

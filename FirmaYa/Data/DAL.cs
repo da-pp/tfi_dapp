@@ -3,15 +3,8 @@ using NpgsqlTypes;
 
 namespace FirmaYa.Data;
 
-/// <summary>
-/// Participante ":DAL" de los diagramas de secuencia: acceso a PostgreSQL (Supabase) con SQL directo y Npgsql.
-/// Este archivo contiene la conexión y utilidades; las operaciones están en DAL.[ClaseBLL].cs según la clase
-/// de negocio que las invoca en el diagrama. Los mensajes DAL → BaseDeDatos corresponden a
-/// EjecutarConsulta ("ejecutar consulta") y EjecutarModificacion ("ejecutar modificación").
-/// </summary>
 public sealed partial class DAL(NpgsqlDataSource dataSource, ILogger<DAL> logger) : IDAL
 {
-    /// <summary>"ejecutar consulta": abre una conexión del pool y ejecuta una lectura.</summary>
     private async Task<T> EjecutarConsulta<T>(
         Func<NpgsqlConnection, CancellationToken, Task<T>> consulta, CancellationToken ct)
     {
@@ -27,7 +20,6 @@ public sealed partial class DAL(NpgsqlDataSource dataSource, ILogger<DAL> logger
         }
     }
 
-    /// <summary>"ejecutar modificación": ejecuta todas las sentencias en una transacción; ante un error hace rollback.</summary>
     private async Task<T> EjecutarModificacion<T>(
         Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task<T>> modificacion, CancellationToken ct)
     {
@@ -54,10 +46,6 @@ public sealed partial class DAL(NpgsqlDataSource dataSource, ILogger<DAL> logger
         }
     }
 
-    /// <summary>
-    /// Crea un comando con parámetros posicionales ($1, $2, …) en el orden recibido.
-    /// Los valores nunca se concatenan al SQL.
-    /// </summary>
     private static NpgsqlCommand Comando(string sql, NpgsqlConnection conexion, NpgsqlTransaction? transaccion,
         params object?[] valores)
     {

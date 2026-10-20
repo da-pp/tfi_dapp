@@ -3,13 +3,8 @@ using System.Text;
 
 namespace FirmaYa.Services;
 
-/// <summary>Línea de texto del PDF: estilo y separación previa.</summary>
 public sealed record LineaPdf(string Texto, bool Negrita = false, double Tamano = 10, double EspacioAntes = 0);
 
-/// <summary>
-/// Generador mínimo de PDF 1.4 (A4, Helvetica, WinAnsiEncoding) sin librerías externas.
-/// Ajusta el texto al ancho, pagina y escribe un pie de página en cada hoja. Lo usa PDFBLL.
-/// </summary>
 public static class GeneradorPdf
 {
     private const double AnchoPagina = 595;
@@ -137,7 +132,6 @@ public static class GeneradorPdf
 
     private static string F(double valor) => valor.ToString("0.##", CultureInfo.InvariantCulture);
 
-    /// <summary>Escapa la cadena PDF y reemplaza lo que no existe en WinAnsi (Latin-1) por "?".</summary>
     private static string Escapar(string texto)
     {
         var resultado = new StringBuilder(texto.Length);

@@ -2,7 +2,6 @@ using FirmaYa.Models.Entidades;
 
 namespace FirmaYa.Data;
 
-/// <summary>Operaciones de :DAL invocadas por :PDFBLL (CU-10).</summary>
 public sealed partial class DAL
 {
     public Task<VersionContrato?> ObtenerContenidoVersionFinal(int idContrato, CancellationToken ct) =>
@@ -25,7 +24,6 @@ public sealed partial class DAL
                     FechaCreacion = FechaUtc(lector, 6) ?? DateTime.MinValue
                 }, token), ct);
 
-    /// <summary>Firmas completadas de la versión actual, con la IP registrada en auditoría.</summary>
     public Task<List<DatosFirma>> ObtenerDatosFirmas(int idContrato, CancellationToken ct) =>
         EjecutarConsulta(async (conexion, token) =>
         {
