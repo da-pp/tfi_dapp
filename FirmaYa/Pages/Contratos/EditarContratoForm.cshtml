@@ -1,0 +1,88 @@
+@page "/Contratos/{idContrato:int}/Editar"
+@model FirmaYa.Pages.Contratos.EditarContratoForm
+@{
+    ViewData["Title"] = "Editar contrato en línea";
+    var contrato = Model.Contrato!;
+}
+
+<partial name="_EncabezadoPagina" model='("editar", Model.SoloLectura ? "Contrato" : "Editar contrato en línea")' />
+<partial name="_CabeceraContrato" model="contrato" />
+<partial name="_PestanasContrato" model='new PestanasContrato(contrato.IdContrato, "editar", Model.EsTitular)' />
+
+@if (Model.SoloLectura || !Model.Editable)
+{
+    @if (!Model.SoloLectura)
+    {
+        @* alt [Contrato en estado Firmado o Archivado] *@
+        <div class="alerta alerta--advertencia" role="alert" style="margin-bottom:16px">
+            <p class="alerta__texto">@EditarContratoForm.MensajeNoEditable</p>
+            <div class="alerta__acciones">
+                <a class="boton boton--primario boton--chico" asp-page="/Contratos/EditarContratoForm"
+                   asp-route-idContrato="@contrato.IdContrato" asp-route-SoloLectura="true">Ver Contrato</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <section class="tarjeta">
+            <h2 class="tarjeta__titulo">Contenido · versión v@(contrato.NumeroVersion) (solo lectura)</h2>
+            <p class="tarjeta__subtitulo">Hash SHA-256: <span class="hash">@contrato.HashVersion</span></p>
+            <div class="contenido-contrato">@Html.Raw(FormatoContenido.AHtml(contrato.ContenidoActual))</div>
+        </section>
+    }
+}
+else
+{
+    <form method="post" id="form-editor" class="grilla grilla--principal" novalidate
+          data-borrador="firmaya:borrador:@contrato.IdContrato:v@(contrato.NumeroVersion)"
+          data-guardado="@Model.Guardado">
+        <section class="tarjeta">
+            <div class="editor__barra" role="toolbar" aria-label="Formato">
+                <button type="button" class="editor__boton" data-formato="negrita" title="Negrita">B</button>
+                <button type="button" class="editor__boton" data-formato="cursiva" title="Cursiva"><em>I</em></button>
+                <button type="button" class="editor__boton" data-formato="lista">Lista</button>
+                <button type="button" class="editor__boton" data-formato="titulo">Título</button>
+                <button type="button" class="editor__boton" data-formato="cita">Cita</button>
+                <span class="etiqueta etiqueta--alerta editor__estado" id="cambios-sin-guardar" hidden>Cambios sin guardar</span>
+            </div>
+            <div class="campo @(Model.ErrorContenido is null ? "" : "campo--error")">
+                <label class="campo__etiqueta" for="contenido" hidden>Contenido del contrato</label>
+                <textarea id="contenido" name="ContenidoNuevo" class="editor__texto" spellcheck="true">@Model.ContenidoNuevo</textarea>
+                <span class="campo__ayuda" id="ayuda-contenido">@Model.ErrorContenido</span>
+            </div>
+            <p class="campo__nota" id="borrador-recuperado" hidden style="margin-top:8px">
+                Se recuperó un borrador local que no estaba guardado.
+            </p>
+        </section>
+
+        <section class="tarjeta pila">
+            <h2 class="tarjeta__titulo">Guardar nueva versión</h2>
+            @if (Model.ErrorGeneral is not null)
+            {
+                <div class="alerta alerta--error" role="alert">@Model.ErrorGeneral</div>
+            }
+            <div class="campo @(Model.ErrorComentario is null ? "" : "campo--error")">
+                <label class="campo__etiqueta" for="comentario">Comentario de versión</label>
+                <textarea id="comentario" name="ComentarioVersion" class="campo__control" maxlength="500" rows="5"
+                          placeholder="Ej: Se ajustó la cláusula de vencimiento y se agregó descripción del inmueble.">@Model.ComentarioVersion</textarea>
+                <span class="campo__ayuda">@Model.ErrorComentario</span>
+            </div>
+            <div class="tarjeta tarjeta--interior">
+                <strong style="font-size:13px">Validaciones</strong>
+                <ul class="lista-validaciones">
+                    <li>El cuerpo del contrato no puede estar vacío.</li>
+                    <li>Debe superar los 100 caracteres.</li>
+                    <li>Se generará un nuevo hash SHA-256.</li>
+                </ul>
+            </div>
+            <button type="submit" class="boton boton--primario boton--bloque">
+                <partial name="_Icono" model='"guardar"' /> Guardar versión
+            </button>
+            <a class="boton boton--secundario boton--bloque" asp-page="/Dashboard/Index">Salir sin guardar</a>
+        </section>
+    </form>
+}
+
+@section Scripts {
+    <script src="~/js/editor.js" asp-append-version="true"></script>
+}

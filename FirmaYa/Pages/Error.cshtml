@@ -1,0 +1,26 @@
+@page
+@model FirmaYa.Pages.ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<section class="tarjeta">
+    @switch (Model.Codigo)
+    {
+        case 403:
+            <h2 class="tarjeta__titulo">Acceso no permitido</h2>
+            <p class="texto-secundario">No tiene permisos para acceder a este contrato, o el enlace ya no es válido.</p>
+            break;
+        case 404:
+            <h2 class="tarjeta__titulo">Página no encontrada</h2>
+            <p class="texto-secundario">La dirección solicitada no existe.</p>
+            break;
+        default:
+            <h2 class="tarjeta__titulo">Ocurrió un error</h2>
+            <p class="texto-secundario">No se pudo procesar la solicitud. Intentá nuevamente en unos minutos.</p>
+            break;
+    }
+    <div class="acciones" style="margin-top:14px">
+        <a class="boton boton--secundario boton--chico" href="~/">Volver al inicio</a>
+    </div>
+</section>

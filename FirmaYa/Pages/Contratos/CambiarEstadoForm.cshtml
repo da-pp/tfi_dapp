@@ -1,0 +1,96 @@
+@page "/Contratos/{idContrato:int}/Estado"
+@model FirmaYa.Pages.Contratos.CambiarEstadoForm
+@{
+    ViewData["Title"] = "Cambiar estado del contrato";
+    var contrato = Model.Contrato!;
+}
+
+<partial name="_EncabezadoPagina" model='("estado", "Cambiar estado del contrato")' />
+<partial name="_CabeceraContrato" model="contrato" />
+<partial name="_PestanasContrato" model='new PestanasContrato(contrato.IdContrato, "estado")' />
+
+@if (Model.Error is not null)
+{
+    <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">@Model.Error</div>
+}
+
+@if (Model.MostrarAvisoSinFirmantes)
+{
+    @* alt [Nuevo estado es "Listo para firmar" y no hay firmantes asignados] *@
+    <div class="alerta alerta--advertencia" role="alert" style="margin-bottom:16px">
+        <p class="alerta__texto">@CambiarEstadoForm.MensajeSinFirmantes</p>
+        <div class="alerta__acciones">
+            <form method="post" asp-page-handler="Confirmar" asp-route-idContrato="@contrato.IdContrato">
+                <input type="hidden" name="EstadoActual" value="@Model.EstadoActual" />
+                <input type="hidden" name="NuevoEstado" value="@Model.NuevoEstado" />
+                <input type="hidden" name="RazonCambio" value="@Model.RazonCambio" />
+                <button type="submit" class="boton boton--primario boton--chico">Continuar</button>
+            </form>
+            <a class="boton boton--secundario boton--chico" asp-page="/Invitaciones/InvitarPartesForm"
+               asp-route-idContrato="@contrato.IdContrato">Invitar partes</a>
+        </div>
+    </div>
+}
+
+<div class="grilla grilla--2">
+    <section class="tarjeta">
+        <h2 class="tarjeta__titulo">Cambiar estado</h2>
+        @if (contrato.TransicionesDisponibles.Count == 0)
+        {
+            <p class="nota">No hay transiciones disponibles desde el estado "@contrato.Estado".</p>
+        }
+        else
+        {
+            <form method="post" class="pila" data-validar novalidate
+                  data-confirmar="¿Confirma el cambio de estado de @contrato.Estado a {NuevoEstado}?">
+                <input type="hidden" name="EstadoActual" value="@contrato.Estado" />
+                <div class="campo">
+                    <label class="campo__etiqueta" for="nuevo-estado">Nuevo estado <span class="campo__requerido">*</span></label>
+                    <select id="nuevo-estado" name="NuevoEstado" class="campo__control" required>
+                        <option value="">Seleccionar</option>
+                        @foreach (var estado in contrato.TransicionesDisponibles)
+                        {
+                            <option value="@estado" selected="@(estado == Model.NuevoEstado)"
+                                    data-descripcion="@CambiarEstadoForm.Descripciones.GetValueOrDefault(estado)">@estado</option>
+                        }
+                    </select>
+                    <span class="campo__ayuda"></span>
+                    <span class="campo__nota" id="descripcion-estado"></span>
+                </div>
+                <div class="campo">
+                    <label class="campo__etiqueta" for="razon">Motivo del cambio</label>
+                    <textarea id="razon" name="RazonCambio" class="campo__control" maxlength="500" rows="5"
+                              placeholder="Motivo opcional para registrar en auditoría.">@Model.RazonCambio</textarea>
+                </div>
+                <button type="submit" class="boton boton--primario boton--bloque">
+                    <partial name="_Icono" model='"estado"' /> Confirmar cambio de estado
+                </button>
+            </form>
+        }
+    </section>
+
+    <section class="tarjeta">
+        <h2 class="tarjeta__titulo">Flujo permitido</h2>
+        <div class="flujo">
+            @foreach (var (origen, destino) in CambiarEstadoForm.FlujoPermitido)
+            {
+                <div class="flujo__paso">@origen → @destino</div>
+            }
+            <p class="nota">Si el contrato no tiene firmantes asignados, el sistema debe ofrecer ir a "Invitar partes".</p>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        // CU-05 paso 6: descripción informativa del estado seleccionado.
+        (() => {
+            const lista = document.getElementById("nuevo-estado");
+            const descripcion = document.getElementById("descripcion-estado");
+            if (!lista) return;
+            const mostrar = () => { descripcion.textContent = lista.selectedOptions[0]?.dataset.descripcion || ""; };
+            lista.addEventListener("change", mostrar);
+            mostrar();
+        })();
+    </script>
+}

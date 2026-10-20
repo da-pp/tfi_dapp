@@ -1,0 +1,28 @@
+@model PestanasContrato
+@{
+    var pestanas = Model.EsTitular
+        ? new (string Clave, string Texto, string Pagina)[]
+        {
+            ("editar", "Editor", "/Contratos/EditarContratoForm"),
+            ("invitar", "Invitar", "/Invitaciones/InvitarPartesForm"),
+            ("estado", "Estado", "/Contratos/CambiarEstadoForm"),
+            ("comentarios", "Comentarios", "/Contratos/ComentariosForm"),
+            ("solicitar", "Solicitar firmas", "/Firmas/SolicitarFirmasForm"),
+            ("firmas", "Estado de firmas", "/Firmas/EstadoFirmasForm"),
+            ("pdf", "PDF", "/Contratos/DescargarPDFForm")
+        }
+        : new (string Clave, string Texto, string Pagina)[]
+        {
+            ("editar", "Contrato", "/Contratos/EditarContratoForm"),
+            ("comentarios", "Comentarios", "/Contratos/ComentariosForm"),
+            ("pdf", "PDF", "/Contratos/DescargarPDFForm")
+        };
+}
+<nav class="pestanas" aria-label="Secciones del contrato">
+    @foreach (var (clave, texto, pagina) in pestanas)
+    {
+        <a class="pestanas__enlace @(clave == Model.Activa ? "pestanas__enlace--activa" : "")"
+           asp-page="@pagina" asp-route-idContrato="@Model.IdContrato"
+           aria-current="@(clave == Model.Activa ? "page" : null)">@texto</a>
+    }
+</nav>

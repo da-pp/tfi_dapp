@@ -1,0 +1,84 @@
+@page "/Contratos/Nuevo"
+@model FirmaYa.Pages.Contratos.NuevoContratoForm
+@{
+    ViewData["Title"] = "Crear contrato desde plantilla";
+    var habilitado = Model.DatosPlantilla is not null;
+}
+
+<partial name="_EncabezadoPagina" model='("documento", "Crear contrato desde plantilla")' />
+
+<div class="grilla grilla--lateral">
+    <section class="tarjeta">
+        <h2 class="tarjeta__titulo">1. Selección de plantilla</h2>
+        <p class="tarjeta__subtitulo">Elegí el tipo de contrato que querés crear.</p>
+        <div class="selector">
+            @foreach (var tipo in Model.TiposDisponibles)
+            {
+                <a class="selector__opcion @(tipo == Model.DatosPlantilla?.TipoContrato ? "selector__opcion--activa" : "")"
+                   asp-page="/Contratos/NuevoContratoForm" asp-route-TipoPlantilla="@tipo">
+                    <span>
+                        <span class="selector__titulo">@tipo</span>
+                        <span class="selector__detalle">Plantilla activa disponible</span>
+                    </span>
+                    <span aria-hidden="true">›</span>
+                </a>
+            }
+        </div>
+        @if (Model.ErrorDe(nameof(Model.TipoPlantilla)) is { } errorTipo)
+        {
+            <p class="campo__ayuda" style="margin-top:10px">@errorTipo</p>
+        }
+    </section>
+
+    <section class="tarjeta">
+        <h2 class="tarjeta__titulo">2. Datos iniciales del contrato</h2>
+        <p class="tarjeta__subtitulo">
+            @(habilitado ? $"Plantilla: {Model.DatosPlantilla!.Nombre} (versión {Model.DatosPlantilla.Version})" : "Seleccioná una plantilla para continuar.")
+        </p>
+
+        <form method="post" data-validar novalidate>
+            <input type="hidden" name="TipoPlantilla" value="@Model.TipoPlantilla" />
+            <fieldset disabled="@(!habilitado)" style="border:0;padding:0;margin:0;min-width:0">
+                <div class="grilla--campos">
+                    <div class="campo @(Model.ErrorDe("NombreContrato") is null ? "" : "campo--error")">
+                        <label class="campo__etiqueta" for="nombre">Nombre del contrato <span class="campo__requerido">*</span></label>
+                        <input id="nombre" name="Entrada.NombreContrato" class="campo__control" value="@Model.Entrada.NombreContrato"
+                               maxlength="200" required placeholder="Ej: Contrato de locación - Corrientes 1240" />
+                        <span class="campo__ayuda">@Model.ErrorDe("NombreContrato")</span>
+                    </div>
+                    <div class="campo @(Model.ErrorDe("PartesInvolucradas") is null ? "" : "campo--error")">
+                        <label class="campo__etiqueta" for="partes">Partes intervinientes <span class="campo__requerido">*</span></label>
+                        <input id="partes" name="Entrada.PartesInvolucradas" class="campo__control" value="@Model.Entrada.PartesInvolucradas"
+                               maxlength="1000" required placeholder="Ej: Juan Pérez / Inmobiliaria Centro" />
+                        <span class="campo__ayuda">@Model.ErrorDe("PartesInvolucradas")</span>
+                    </div>
+                    <div class="campo @(Model.ErrorDe("FechaInicio") is null ? "" : "campo--error")">
+                        <label class="campo__etiqueta" for="inicio">Fecha de inicio <span class="campo__requerido">*</span></label>
+                        <input id="inicio" name="Entrada.FechaInicio" class="campo__control" value="@Model.Entrada.FechaInicio"
+                               required data-fecha inputmode="numeric" maxlength="10" placeholder="DD/MM/AAAA" />
+                        <span class="campo__ayuda">@Model.ErrorDe("FechaInicio")</span>
+                    </div>
+                    <div class="campo @(Model.ErrorDe("FechaExpiracion") is null ? "" : "campo--error")">
+                        <label class="campo__etiqueta" for="vencimiento">Fecha de vencimiento</label>
+                        <input id="vencimiento" name="Entrada.FechaExpiracion" class="campo__control" value="@Model.Entrada.FechaExpiracion"
+                               data-fecha inputmode="numeric" maxlength="10" placeholder="DD/MM/AAAA" />
+                        <span class="campo__ayuda">@Model.ErrorDe("FechaExpiracion")</span>
+                    </div>
+                    <div class="campo campo--completo @(Model.ErrorDe("DescripcionPropiedad") is null ? "" : "campo--error")">
+                        <label class="campo__etiqueta" for="descripcion">Descripción del inmueble</label>
+                        <textarea id="descripcion" name="Entrada.DescripcionPropiedad" class="campo__control" maxlength="2000"
+                                  placeholder="Ingresá domicilio, características principales y observaciones.">@Model.Entrada.DescripcionPropiedad</textarea>
+                        <span class="campo__ayuda">@Model.ErrorDe("DescripcionPropiedad")</span>
+                    </div>
+                </div>
+
+                <div class="acciones acciones--fin" style="margin-top:18px">
+                    <a class="boton boton--secundario boton--chico" asp-page="/Dashboard/Index">Cancelar</a>
+                    <button type="submit" class="boton boton--primario boton--chico">
+                        <partial name="_Icono" model='"mas"' /> Crear contrato
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+    </section>
+</div>

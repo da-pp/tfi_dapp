@@ -1,0 +1,51 @@
+@using System.Security.Claims
+@{
+    var autenticado = User.Identity?.IsAuthenticated == true;
+    var nombre = User.FindFirstValue(ClaimTypes.Name);
+    var rol = User.FindFirstValue(ClaimTypes.Role);
+    var bienvenida = TempData["Bienvenida"] as string;
+    var mensaje = TempData["Mensaje"] as string;
+    var error = TempData["Error"] as string;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>@ViewData["Title"] · FirmaYa</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contratos.css" asp-append-version="true" />
+</head>
+<body>
+    @if (autenticado)
+    {
+        <header class="barra">
+            <span class="barra__marca"><a href="~/">FirmaYa</a></span>
+            <div class="barra__usuario">
+                <span class="barra__nombre">@nombre</span>
+                <span class="etiqueta">@rol</span>
+                <form method="post" asp-page="/Login/Salir">
+                    <button type="submit" class="boton boton--secundario boton--chico">Salir</button>
+                </form>
+            </div>
+        </header>
+    }
+
+    <main class="contenido">
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">@error</div>
+        }
+        @RenderBody()
+    </main>
+
+    @if (!string.IsNullOrEmpty(bienvenida) || !string.IsNullOrEmpty(mensaje))
+    {
+        <div class="aviso" role="status" data-autocerrar>@(bienvenida ?? mensaje)</div>
+    }
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

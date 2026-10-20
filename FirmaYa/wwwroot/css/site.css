@@ -1,0 +1,287 @@
+/* FirmaYa — tokens y componentes base, tomados de los prototipos del documento. */
+:root {
+    --color-fondo: #eef2f7;
+    --color-superficie: #ffffff;
+    --color-borde: #e2e8f0;
+    --color-texto: #0f172a;
+    --color-texto-secundario: #64748b;
+    --color-texto-tenue: #94a3b8;
+    --color-primario: #020617;
+    --color-primario-hover: #1e293b;
+    --color-marca: #050b1f;
+    --color-error: #dc2626;
+    --color-error-fondo: #fef2f2;
+    --color-error-borde: #fecaca;
+    --color-error-texto: #991b1b;
+    --color-advertencia-fondo: #fffbeb;
+    --color-advertencia-borde: #fde68a;
+    --color-advertencia-texto: #92400e;
+    --color-foco: rgba(2, 6, 23, 0.12);
+
+    --radio-tarjeta: 18px;
+    --radio-control: 10px;
+    --sombra-tarjeta: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+
+    --fuente: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: var(--fuente);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-texto);
+    background: var(--color-fondo);
+}
+
+h1, h2, h3, p {
+    margin: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* Botones */
+.boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: var(--radio-control);
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.boton:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--color-foco);
+}
+
+.boton:disabled {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+.boton--primario {
+    background: var(--color-primario);
+    color: #ffffff;
+}
+
+.boton--primario:hover:not(:disabled) {
+    background: var(--color-primario-hover);
+}
+
+.boton--secundario {
+    background: var(--color-superficie);
+    border-color: var(--color-borde);
+    color: var(--color-texto);
+}
+
+.boton--secundario:hover:not(:disabled) {
+    background: #f8fafc;
+}
+
+.boton--chico {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+}
+
+.boton--bloque {
+    width: 100%;
+}
+
+/* Campos de formulario */
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.campo__etiqueta {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.campo__requerido {
+    color: var(--color-error);
+}
+
+.campo__control {
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-control);
+    background: var(--color-superficie);
+    font: inherit;
+    font-size: 14px;
+    color: var(--color-texto);
+}
+
+.campo__control::placeholder {
+    color: var(--color-texto-tenue);
+}
+
+.campo__control:focus {
+    outline: none;
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 4px var(--color-foco);
+}
+
+.campo__ayuda {
+    min-height: 0;
+    font-size: 12px;
+    color: var(--color-error);
+}
+
+.campo__ayuda:empty {
+    display: none;
+}
+
+.campo--error .campo__control {
+    border-color: var(--color-error);
+}
+
+.campo--error .campo__control:focus {
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+}
+
+/* Alertas */
+.alerta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid;
+    border-radius: var(--radio-control);
+    font-size: 13px;
+}
+
+.alerta--error {
+    background: var(--color-error-fondo);
+    border-color: var(--color-error-borde);
+    color: var(--color-error-texto);
+}
+
+.alerta--advertencia {
+    background: var(--color-advertencia-fondo);
+    border-color: var(--color-advertencia-borde);
+    color: var(--color-advertencia-texto);
+}
+
+.alerta__acciones {
+    display: flex;
+    gap: 8px;
+}
+
+/* Etiqueta tipo "pill" */
+.etiqueta {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border: 1px solid var(--color-borde);
+    border-radius: 999px;
+    background: #f8fafc;
+    font-size: 12px;
+    color: #334155;
+}
+
+/* Estructura de páginas autenticadas */
+.barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--color-superficie);
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.barra__marca {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.barra__usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.barra__usuario form {
+    margin: 0;
+}
+
+.barra__nombre {
+    font-weight: 600;
+}
+
+.contenido {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+.tarjeta {
+    padding: 24px;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-tarjeta);
+    box-shadow: var(--sombra-tarjeta);
+}
+
+.tarjeta__titulo {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.texto-secundario {
+    color: var(--color-texto-secundario);
+}
+
+/* Aviso flotante (mensaje de bienvenida) */
+.aviso {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    max-width: calc(100% - 32px);
+    padding: 12px 16px;
+    background: var(--color-primario);
+    color: #ffffff;
+    border-radius: var(--radio-control);
+    box-shadow: var(--sombra-tarjeta);
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+}
+
+.aviso--oculto {
+    opacity: 0;
+}
+
+@media (max-width: 640px) {
+    .barra {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+    }
+}

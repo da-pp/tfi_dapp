@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>FirmaYa</RootNamespace>
+    <UserSecretsId>0b6c7a52-6a4e-4a8e-9a43-3f1d2c7e5b90</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Controlador ADO.NET de PostgreSQL. No se usa ningún ORM. -->
+    <PackageReference Include="Npgsql" Version="8.0.7" />
+  </ItemGroup>
+
+</Project>

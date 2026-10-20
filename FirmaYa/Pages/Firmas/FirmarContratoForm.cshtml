@@ -1,0 +1,126 @@
+@page "/Firmar/{token}"
+@model FirmaYa.Pages.Firmas.FirmarContratoForm
+@using Pasos = FirmaYa.Pages.Firmas.FirmarContratoForm.Pasos
+@{
+    ViewData["Title"] = "Firmar contrato mediante OTP";
+    var contrato = Model.DatosContrato;
+}
+
+<partial name="_EncabezadoPagina" model='("firma", "Firmar contrato mediante OTP")' />
+
+@if (Model.Paso == Pasos.Error)
+{
+    <section class="tarjeta" role="alert">
+        <h2 class="tarjeta__titulo">Firma no disponible</h2>
+        <p class="texto-secundario">@Model.Mensaje</p>
+    </section>
+}
+else
+{
+    <section class="tarjeta paso" style="margin-bottom:16px">
+        <div>
+            <span class="etiqueta etiqueta--info">Firma segura OTP</span>
+            <h2 class="tarjeta__titulo" style="margin-top:8px">@contrato?.Nombre</h2>
+            <p class="campo__nota">Versión v@(contrato?.NumeroVersion) · Hash visible antes de confirmar la firma.</p>
+        </div>
+        <span class="etiqueta etiqueta--alerta">
+            @(Model.Paso == Pasos.Lectura ? "Paso 1 de 2" : Model.Paso == Pasos.CodigoOtp ? "Paso 2 de 2" : "Firmado")
+        </span>
+    </section>
+
+    @if (Model.Paso == Pasos.Firmado)
+    {
+        <section class="tarjeta pila">
+            <div class="alerta alerta--exito" role="status">@Model.Mensaje</div>
+            <div class="acciones">
+                <a class="boton boton--primario" asp-page="/Contratos/DescargarPDFForm" asp-route-token="@Model.Token">
+                    <partial name="_Icono" model='"descargar"' /> Descargar PDF
+                </a>
+            </div>
+        </section>
+    }
+    else if (Model.Paso == Pasos.Lectura)
+    {
+        <section class="tarjeta pila">
+            <div>
+                <h3 class="tarjeta__titulo">Lectura del contrato</h3>
+                <p class="tarjeta__subtitulo">El firmante debe leer el contenido completo del contrato antes de avanzar al paso de verificación.</p>
+                <p class="hash">Hash: @contrato!.HashVersion</p>
+            </div>
+            @if (Model.Mensaje is not null)
+            {
+                <div class="alerta alerta--error" role="alert">@Model.Mensaje</div>
+            }
+            <div class="contenido-contrato contenido-contrato--desplazable" id="lectura" tabindex="0">
+                @Html.Raw(FormatoContenido.AHtml(contrato.ContenidoActual))
+            </div>
+            <form method="post" asp-page-handler="EnviarOtp" asp-route-token="@Model.Token" class="acciones acciones--fin">
+                <button type="submit" class="boton boton--primario" id="leer-y-firmar" disabled>
+                    <partial name="_Icono" model='"firma"' /> Leer y firmar el contrato
+                </button>
+            </form>
+            <p class="campo__nota" id="ayuda-lectura">Desplácese hasta el final del contrato para habilitar la firma.</p>
+        </section>
+    }
+    else
+    {
+        <section class="tarjeta pila">
+            <h3 class="tarjeta__titulo">Verificación</h3>
+            <p class="texto-secundario">
+                Ingrese el código de 6 dígitos enviado a <strong>@Model.Firmante!.CorreoInvitado</strong>. El código expira en 10 minutos.
+            </p>
+            @if (Model.Mensaje is not null)
+            {
+                <div class="alerta alerta--error" role="alert">@Model.Mensaje</div>
+            }
+            <form method="post" asp-page-handler="ValidarOtp" asp-route-token="@Model.Token" class="pila" novalidate>
+                <div class="campo">
+                    <label class="campo__etiqueta" for="codigo">Código OTP <span class="campo__requerido">*</span></label>
+                    <input id="codigo" name="CodigoOTP" class="campo__control codigo-otp" inputmode="numeric" autocomplete="one-time-code"
+                           maxlength="6" pattern="[0-9]{6}" required autofocus />
+                    <span class="campo__ayuda"></span>
+                </div>
+                <div class="acciones">
+                    <button type="submit" class="boton boton--primario">
+                        <partial name="_Icono" model='"escudo"' /> Firmar contrato
+                    </button>
+                </div>
+            </form>
+            <form method="post" asp-page-handler="EnviarOtp" asp-route-token="@Model.Token">
+                <button type="submit" class="boton @(Model.OtpExpirado ? "boton--primario" : "boton--secundario") boton--chico">Reenviar código</button>
+            </form>
+        </section>
+    }
+}
+
+@section Scripts {
+    <script>
+        // CU-08 pasos 8 y 9: "Leer y firmar el contrato" se habilita al llegar al final del documento.
+        (() => {
+            const lectura = document.getElementById("lectura");
+            const boton = document.getElementById("leer-y-firmar");
+            if (lectura && boton) {
+                const revisar = () => {
+                    if (lectura.scrollTop + lectura.clientHeight >= lectura.scrollHeight - 8) {
+                        boton.disabled = false;
+                        document.getElementById("ayuda-lectura").hidden = true;
+                    }
+                };
+                lectura.addEventListener("scroll", revisar);
+                revisar();
+            }
+
+            // Paso 14: exactamente 6 dígitos numéricos.
+            const codigo = document.getElementById("codigo");
+            if (codigo) {
+                codigo.addEventListener("input", () => { codigo.value = codigo.value.replace(/\D/g, "").slice(0, 6); });
+                codigo.form.addEventListener("submit", (evento) => {
+                    if (!/^\d{6}$/.test(codigo.value)) {
+                        evento.preventDefault();
+                        FirmaYa.marcarCampo(codigo, "El código debe tener exactamente 6 dígitos numéricos.");
+                    }
+                });
+            }
+        })();
+    </script>
+}

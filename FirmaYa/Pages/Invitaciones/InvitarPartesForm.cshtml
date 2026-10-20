@@ -1,0 +1,120 @@
+@page "/Contratos/{idContrato:int}/Invitar"
+@model FirmaYa.Pages.Invitaciones.InvitarPartesForm
+@{
+    ViewData["Title"] = "Invitar partes al contrato";
+    var contrato = Model.Contrato!;
+    var archivado = contrato.Estado == EstadosContrato.Archivado;
+}
+
+<partial name="_EncabezadoPagina" model='("usuarios", "Invitar partes al contrato")' />
+<partial name="_CabeceraContrato" model="contrato" />
+<partial name="_PestanasContrato" model='new PestanasContrato(contrato.IdContrato, "invitar")' />
+
+@if (Model.ErrorEnvio is { } errorEnvio)
+{
+    @* alt [Falla en el envío del correo] *@
+    <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">
+        <p class="alerta__texto">@InvitarPartesForm.MensajeErrorEnvio</p>
+        <div class="alerta__acciones">
+            <form method="post" asp-page-handler="Reintentar" asp-route-idContrato="@contrato.IdContrato">
+                <input type="hidden" name="CorreoElectronico" value="@errorEnvio.CorreoElectronico" />
+                <input type="hidden" name="NombreParte" value="@Model.NombreParte" />
+                <input type="hidden" name="MensajePersonalizado" value="@Model.MensajePersonalizado" />
+                <button type="submit" class="boton boton--primario boton--chico">Reintentar</button>
+            </form>
+            <button type="button" class="boton boton--secundario boton--chico" data-copiar="@errorEnvio.EnlaceTokenizado">
+                <partial name="_Icono" model='"copiar"' /> Copiar enlace
+            </button>
+        </div>
+    </div>
+}
+@if (Model.ErrorGeneral is not null)
+{
+    <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">@Model.ErrorGeneral</div>
+}
+
+<div class="grilla grilla--lateral">
+    <section class="tarjeta">
+        <h2 class="tarjeta__titulo">Nueva invitación</h2>
+        @if (archivado)
+        {
+            <p class="nota">El contrato está archivado: no se pueden invitar partes.</p>
+        }
+        else
+        {
+            <form method="post" id="form-invitar" class="pila" data-validar novalidate
+                  data-validar-correo="@Url.Page("/Invitaciones/InvitarPartesForm", "ValidarCorreo", new { idContrato = contrato.IdContrato })">
+                <div class="campo @(Model.ErrorDe("Correo") is null ? "" : "campo--error")">
+                    <label class="campo__etiqueta" for="correo">Email de la parte <span class="campo__requerido">*</span></label>
+                    <input id="correo" name="CorreoElectronico" type="email" class="campo__control" value="@Model.CorreoElectronico"
+                           maxlength="254" required placeholder="nombre@dominio.com" autocomplete="off" />
+                    <span class="campo__ayuda">@Model.ErrorDe("Correo")</span>
+                </div>
+                <div class="campo @(Model.ErrorDe("NombreParte") is null ? "" : "campo--error")">
+                    <label class="campo__etiqueta" for="nombre-parte">Nombre de la parte <span class="campo__requerido">*</span></label>
+                    <input id="nombre-parte" name="NombreParte" class="campo__control" value="@Model.NombreParte"
+                           maxlength="150" required placeholder="Nombre y apellido" />
+                    <span class="campo__ayuda">@Model.ErrorDe("NombreParte")</span>
+                </div>
+                <div class="campo @(Model.ErrorDe("Rol") is null ? "" : "campo--error")">
+                    <label class="campo__etiqueta" for="rol">Rol asignado <span class="campo__requerido">*</span></label>
+                    <select id="rol" name="Rol" class="campo__control" required>
+                        <option value="">Seleccionar</option>
+                        @foreach (var rol in RolesParte.Todos)
+                        {
+                            <option value="@rol" selected="@(rol == Model.Rol)">@rol</option>
+                        }
+                    </select>
+                    <span class="campo__ayuda">@Model.ErrorDe("Rol")</span>
+                </div>
+                <div class="campo @(Model.ErrorDe("MensajePersonalizado") is null ? "" : "campo--error")">
+                    <label class="campo__etiqueta" for="mensaje">Mensaje personalizado</label>
+                    <textarea id="mensaje" name="MensajePersonalizado" class="campo__control" maxlength="500"
+                              placeholder="Mensaje opcional para incluir en la invitación.">@Model.MensajePersonalizado</textarea>
+                    <span class="campo__ayuda">@Model.ErrorDe("MensajePersonalizado")</span>
+                </div>
+                <button type="submit" class="boton boton--primario boton--bloque">
+                    <partial name="_Icono" model='"correo"' /> Enviar invitación
+                </button>
+            </form>
+        }
+    </section>
+
+    <section class="tarjeta">
+        <h2 class="tarjeta__titulo">Partes invitadas</h2>
+        @if (Model.ListaPartesInvitadas.Count == 0)
+        {
+            <p class="vacio">Todavía no hay partes invitadas.</p>
+        }
+        else
+        {
+            <div class="tabla-contenedor">
+                <table class="tabla">
+                    <thead>
+                        <tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acción</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var parte in Model.ListaPartesInvitadas)
+                        {
+                            <tr>
+                                <td class="tabla__fuerte">@(string.IsNullOrWhiteSpace(parte.Nombre) ? "—" : parte.Nombre)</td>
+                                <td class="tabla__tenue">@parte.CorreoInvitado</td>
+                                <td><span class="etiqueta">@parte.RolParte</span></td>
+                                <td><span class="@Etiquetas.Clase(parte.EstadoInvitacion)">@parte.EstadoInvitacion</span></td>
+                                <td>
+                                    <button type="button" class="boton boton--secundario boton--chico" data-copiar="@Model.EnlaceDe(parte)">
+                                        <partial name="_Icono" model='"copiar"' /> Copiar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/js/invitar.js" asp-append-version="true"></script>
+}

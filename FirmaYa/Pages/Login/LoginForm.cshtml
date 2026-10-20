@@ -1,0 +1,83 @@
+@page "/Login"
+@model FirmaYa.Pages.Login.LoginForm
+@{
+    Layout = null;
+    var errorCorreo = Model.ErrorDe(nameof(LoginViewModel.Correo));
+    var errorContrasena = Model.ErrorDe(nameof(LoginViewModel.Contrasena));
+    var respuesta = Model.Respuesta;
+    var claseAlerta = respuesta?.CuentaBloqueada == true ? "alerta alerta--advertencia" : "alerta alerta--error";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar sesión · FirmaYa</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+</head>
+<body class="pagina-login">
+    <main class="login">
+        <section class="login__tarjeta">
+            <aside class="login__marca">
+                <div class="login__logo" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                        <path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />
+                    </svg>
+                </div>
+                <h1 class="login__titulo-marca">Plataforma Centralizada de Gestión de Contratos</h1>
+                <p class="login__bajada">Accedé para crear, editar, firmar y auditar contratos con trazabilidad por versión y hash.</p>
+                <p class="login__pie">MVP · Firma OTP · Auditoría · Versionado</p>
+            </aside>
+
+            <div class="login__panel">
+                <form id="form-login" class="login__formulario" method="post" novalidate>
+                    <h2 class="login__titulo">Iniciar sesión</h2>
+                    <p class="login__subtitulo">Ingresá con tu cuenta para continuar.</p>
+
+                    <div id="alerta" class="@claseAlerta" role="alert" hidden="@(respuesta?.Mensaje is null)">
+                        <p class="alerta__texto">@respuesta?.Mensaje</p>
+                        <div class="alerta__acciones" hidden="@(respuesta?.ErrorConexion != true)">
+                            <button type="button" class="boton boton--primario boton--chico" data-accion="reintentar">Reintentar</button>
+                            <button type="button" class="boton boton--secundario boton--chico" data-accion="cancelar">Cancelar</button>
+                        </div>
+                    </div>
+
+                    <div class="campo @(errorCorreo is null ? "" : "campo--error")">
+                        <label class="campo__etiqueta" for="correo">Email <span class="campo__requerido">*</span></label>
+                        <input id="correo" name="Entrada.Correo" type="email" class="campo__control"
+                               value="@Model.Entrada.Correo" maxlength="@LoginViewModel.LongitudMaximaCorreo"
+                               placeholder="usuario@dominio.com" autocomplete="username" autofocus
+                               aria-describedby="correo-ayuda" aria-invalid="@(errorCorreo is not null ? "true" : "false")" />
+                        <span id="correo-ayuda" class="campo__ayuda">@errorCorreo</span>
+                    </div>
+
+                    <div class="campo @(errorContrasena is null ? "" : "campo--error")">
+                        <label class="campo__etiqueta" for="contrasena">Contraseña <span class="campo__requerido">*</span></label>
+                        <input id="contrasena" name="Entrada.Contrasena" type="password" class="campo__control"
+                               placeholder="••••••••" autocomplete="current-password"
+                               aria-describedby="contrasena-ayuda" aria-invalid="@(errorContrasena is not null ? "true" : "false")" />
+                        <span id="contrasena-ayuda" class="campo__ayuda">@errorContrasena</span>
+                    </div>
+
+                    <button type="submit" class="boton boton--primario boton--bloque">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" x2="3" y1="12" y2="12" />
+                        </svg>
+                        <span>Ingresar</span>
+                    </button>
+
+                    @* CU-21 Recuperar Contraseña no forma parte de esta etapa: el enlace se muestra como en el prototipo, deshabilitado. *@
+                    <a class="login__enlace" role="link" aria-disabled="true" title="Disponible cuando se implemente el CU-21">¿Olvidaste tu contraseña?</a>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="~/js/login.js" asp-append-version="true"></script>
+</body>
+</html>

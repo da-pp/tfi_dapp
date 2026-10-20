@@ -1,0 +1,118 @@
+@page "/Contratos/{idContrato:int}/SolicitarFirmas"
+@model FirmaYa.Pages.Firmas.SolicitarFirmasForm
+@{
+    ViewData["Title"] = "Solicitar firma a las partes";
+    var contrato = Model.Contrato!;
+    var listo = contrato.Estado == EstadosContrato.ListoParaFirmar;
+}
+
+<partial name="_EncabezadoPagina" model='("correo", "Solicitar firma a las partes")' />
+<partial name="_CabeceraContrato" model="contrato" />
+<partial name="_PestanasContrato" model='new PestanasContrato(contrato.IdContrato, "solicitar")' />
+
+@if (Model.ErrorDe("") is { } errorGeneral)
+{
+    <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">@errorGeneral</div>
+}
+
+@if (Model.Resultado is { } resultado)
+{
+    @* alt [Falla en el envío para uno o más firmantes] *@
+    <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">
+        <p class="alerta__texto">No se pudo enviar la notificación a: @string.Join(", ", resultado.FirmantesConError.Select(f => f.NombreVisible)).</p>
+        <div class="alerta__acciones">
+            <form method="post" asp-page-handler="Reintentar" asp-route-idContrato="@contrato.IdContrato">
+                @foreach (var firmante in resultado.FirmantesConError)
+                {
+                    <input type="hidden" name="FirmantesConError" value="@firmante.IdParte" />
+                }
+                <input type="hidden" name="CanalNotificacion" value="@Model.CanalNotificacion" />
+                <input type="hidden" name="MensajePersonalizado" value="@Model.MensajePersonalizado" />
+                <button type="submit" class="boton boton--primario boton--chico">Reintentar fallidos</button>
+            </form>
+            @foreach (var firmante in resultado.FirmantesConError)
+            {
+                <button type="button" class="boton boton--secundario boton--chico" data-copiar="@Model.EnlaceFirma(firmante)">
+                    <partial name="_Icono" model='"copiar"' /> Copiar enlace · @firmante.NombreVisible
+                </button>
+            }
+        </div>
+    </div>
+}
+
+@if (!listo)
+{
+    <section class="tarjeta">
+        <p class="nota">El contrato debe estar en estado "Listo para firmar" para solicitar firmas. Estado actual: @contrato.Estado.</p>
+        <div class="acciones" style="margin-top:14px">
+            <a class="boton boton--secundario boton--chico" asp-page="/Contratos/CambiarEstadoForm" asp-route-idContrato="@contrato.IdContrato">Cambiar estado</a>
+        </div>
+    </section>
+}
+else if (Model.ListaFirmantes.Count == 0)
+{
+    @* alt [No hay firmantes asignados] *@
+    <section class="tarjeta">
+        <p class="nota">@SolicitarFirmasForm.MensajeSinFirmantes</p>
+        <div class="acciones" style="margin-top:14px">
+            <a class="boton boton--primario boton--chico" asp-page="/Invitaciones/InvitarPartesForm" asp-route-idContrato="@contrato.IdContrato">Ir a invitar partes</a>
+        </div>
+    </section>
+}
+else
+{
+    <section class="tarjeta progreso" style="margin-bottom:16px">
+        <div>
+            <h2 class="tarjeta__titulo">Progreso de firmas</h2>
+            <p class="campo__nota">@Model.FirmasCompletadas de @Model.ListaFirmantes.Count firmas completadas.</p>
+        </div>
+        <div class="progreso__barra" aria-hidden="true">
+            <div class="progreso__relleno" style="width:@(Model.ListaFirmantes.Count == 0 ? 0 : 100 * Model.FirmasCompletadas / Model.ListaFirmantes.Count)%"></div>
+        </div>
+    </section>
+
+    <div class="grilla grilla--2">
+        <section class="tarjeta pila">
+            <h2 class="tarjeta__titulo">Firmantes</h2>
+            @foreach (var firmante in Model.ListaFirmantes)
+            {
+                <div class="selector__opcion" style="cursor:default">
+                    <span>
+                        <span class="selector__titulo">@firmante.NombreVisible</span>
+                        <span class="selector__detalle">@firmante.CorreoInvitado</span>
+                    </span>
+                    <span class="@Etiquetas.Clase(firmante.EstadoFirma)">@firmante.EstadoFirma</span>
+                </div>
+            }
+        </section>
+
+        <section class="tarjeta">
+            <h2 class="tarjeta__titulo">Configurar solicitud</h2>
+            <form method="post" class="pila" data-validar novalidate>
+                <div class="campo @(Model.ErrorDe("CanalNotificacion") is null ? "" : "campo--error")">
+                    <label class="campo__etiqueta" for="canal">Canal de notificación <span class="campo__requerido">*</span></label>
+                    <select id="canal" name="CanalNotificacion" class="campo__control" required>
+                        <option value="">Seleccionar</option>
+                        <option value="@CanalesNotificacion.CorreoElectronico" selected="@(Model.CanalNotificacion == CanalesNotificacion.CorreoElectronico)">@CanalesNotificacion.CorreoElectronico</option>
+                    </select>
+                    <span class="campo__ayuda">@Model.ErrorDe("CanalNotificacion")</span>
+                </div>
+                <div class="campo @(Model.ErrorDe("MensajePersonalizado") is null ? "" : "campo--error")">
+                    <label class="campo__etiqueta" for="mensaje">Mensaje personalizado</label>
+                    <textarea id="mensaje" name="MensajePersonalizado" class="campo__control" maxlength="500"
+                              placeholder="Mensaje opcional para los firmantes.">@Model.MensajePersonalizado</textarea>
+                    <span class="campo__ayuda">@Model.ErrorDe("MensajePersonalizado")</span>
+                </div>
+                <div class="campo @(Model.ErrorDe("FechaLimiteFirma") is null ? "" : "campo--error")">
+                    <label class="campo__etiqueta" for="fecha-limite">Fecha límite de firma</label>
+                    <input id="fecha-limite" name="FechaLimiteFirma" class="campo__control" value="@Model.FechaLimiteFirma"
+                           data-fecha inputmode="numeric" maxlength="10" placeholder="DD/MM/AAAA" />
+                    <span class="campo__ayuda">@Model.ErrorDe("FechaLimiteFirma")</span>
+                </div>
+                <button type="submit" class="boton boton--primario boton--bloque">
+                    <partial name="_Icono" model='"correo"' /> Enviar solicitudes de firma
+                </button>
+            </form>
+        </section>
+    </div>
+}

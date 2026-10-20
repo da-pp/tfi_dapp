@@ -1,0 +1,78 @@
+@page "/Invitado/{token}"
+@model FirmaYa.Pages.Invitaciones.VerContratoForm
+@inject HoraLocal Hora
+@{
+    ViewData["Title"] = "Contrato";
+    var contrato = Model.DatosContrato;
+}
+
+<partial name="_EncabezadoPagina" model='("ver", "Ver contrato")' />
+
+@if (Model.Error is not null)
+{
+    <section class="tarjeta" role="alert">
+        <h2 class="tarjeta__titulo">Acceso no disponible</h2>
+        <p class="texto-secundario">@Model.Error</p>
+    </section>
+}
+else
+{
+    <div id="vista-contrato"
+         data-renovar="@Url.Page("/Invitaciones/VerContratoForm", "Renovar", new { token = Model.Token })"
+         data-minutos-inactividad="60" data-minutos-aviso="5">
+        @Html.AntiForgeryToken()
+
+        <section class="tarjeta metadatos" style="position:sticky;top:8px;z-index:5">
+            <div class="metadatos__item">
+                <span class="metadatos__etiqueta">Contrato</span>
+                <span class="metadatos__valor">@contrato!.Nombre</span>
+            </div>
+            <div class="metadatos__item">
+                <span class="metadatos__etiqueta">Estado · Versión</span>
+                <span><span class="@Etiquetas.Clase(contrato.Estado)">@contrato.Estado</span> <strong>v@(contrato.NumeroVersion)</strong></span>
+            </div>
+            <div class="metadatos__item">
+                <span class="metadatos__etiqueta">Última modificación</span>
+                <span class="metadatos__valor">@Hora.Formatear(contrato.FechaUltimaModificacion)</span>
+            </div>
+            <div class="metadatos__item">
+                <span class="metadatos__etiqueta">Hash de la versión</span>
+                <span class="metadatos__hash">@contrato.HashVersion</span>
+            </div>
+        </section>
+
+        <div class="grilla grilla--principal">
+            <section class="tarjeta">
+                <div class="contenido-contrato">@Html.Raw(FormatoContenido.AHtml(contrato.ContenidoActual))</div>
+            </section>
+
+            <section class="tarjeta pila">
+                <div>
+                    <span class="metadatos__etiqueta">Su rol en el contrato</span>
+                    <p><span class="etiqueta etiqueta--info">@Model.DatosToken!.RolParte</span></p>
+                </div>
+                @if (Model.PuedeFirmar)
+                {
+                    <a class="boton boton--primario boton--bloque" asp-page="/Firmas/FirmarContratoForm" asp-route-token="@Model.Token">
+                        <partial name="_Icono" model='"firma"' /> Firmar contrato
+                    </a>
+                }
+                <a class="boton boton--secundario boton--bloque" asp-page="/Contratos/DescargarPDFForm" asp-route-token="@Model.Token">
+                    <partial name="_Icono" model='"descargar"' /> Descargar PDF
+                </a>
+                <p class="campo__nota">La versión y el hash se mantienen visibles para que pueda verificar la integridad del documento.</p>
+            </section>
+        </div>
+    </div>
+
+    <template id="pantalla-expirada">
+        <section class="tarjeta" role="alert">
+            <h2 class="tarjeta__titulo">Sesión expirada</h2>
+            <p class="texto-secundario">@VerContratoForm.MensajeTokenInvalido</p>
+        </section>
+    </template>
+}
+
+@section Scripts {
+    <script src="~/js/invitado.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,115 @@
+@page "/Contratos/{idContrato:int}/Firmas"
+@model FirmaYa.Pages.Firmas.EstadoFirmasForm
+@inject HoraLocal Hora
+@{
+    ViewData["Title"] = "Consultar estado de firmas pendientes";
+    var contrato = Model.Contrato!;
+    var estado = Model.Estado!;
+}
+
+<partial name="_EncabezadoPagina" model='("actividad", "Consultar estado de firmas pendientes")' />
+<partial name="_CabeceraContrato" model="contrato" />
+<partial name="_PestanasContrato" model='new PestanasContrato(contrato.IdContrato, "firmas")' />
+
+@if (!estado.ExistenSolicitudes)
+{
+    @* alt [No hay solicitudes de firma enviadas] *@
+    <section class="tarjeta">
+        <p class="nota">@EstadoFirmasForm.MensajeSinSolicitudes</p>
+        <div class="acciones" style="margin-top:14px">
+            <a class="boton boton--primario boton--chico" asp-page="/Firmas/SolicitarFirmasForm" asp-route-idContrato="@contrato.IdContrato">Solicitar firmas</a>
+        </div>
+    </section>
+}
+else
+{
+    @if (Model.ErrorReenvio is { } error)
+    {
+        @* alt [Fallo en el reenvío] *@
+        <div class="alerta alerta--error" role="alert" style="margin-bottom:16px">
+            <p class="alerta__texto">@EstadoFirmasForm.MensajeErrorReenvio</p>
+            <div class="alerta__acciones">
+                <form method="post" asp-page-handler="Reenviar" asp-route-idContrato="@contrato.IdContrato">
+                    <input type="hidden" name="Firmante" value="@Model.Firmante" />
+                    <button type="submit" class="boton boton--primario boton--chico">Reintentar</button>
+                </form>
+                <button type="button" class="boton boton--secundario boton--chico" data-copiar="@error.EnlaceFirmante">
+                    <partial name="_Icono" model='"copiar"' /> Copiar enlace
+                </button>
+            </div>
+        </div>
+    }
+
+    @if (Model.TodasFirmadas)
+    {
+        <div class="alerta alerta--exito" role="status" style="margin-bottom:16px">@EstadoFirmasForm.MensajeTodasFirmadas</div>
+    }
+
+    <section class="tarjeta progreso" style="margin-bottom:16px">
+        <div>
+            <h2 class="tarjeta__titulo">Progreso de firmas</h2>
+            <p class="campo__nota">@Model.FirmasCompletadas de @estado.ListaFirmantes.Count firmas completadas.</p>
+        </div>
+        <div class="progreso__barra" aria-hidden="true">
+            <div class="progreso__relleno" style="width:@(estado.ListaFirmantes.Count == 0 ? 0 : 100 * Model.FirmasCompletadas / estado.ListaFirmantes.Count)%"></div>
+        </div>
+    </section>
+
+    <section class="tarjeta">
+        <div class="tabla-contenedor">
+            <table class="tabla">
+                <thead>
+                    <tr><th>Firmante</th><th>Estado</th><th>Evento</th><th>IP / Hash</th><th>Acción</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var firmante in estado.ListaFirmantes)
+                    {
+                        var firmado = firmante.EstadoFirma == EstadosFirma.Firmado;
+                        <tr>
+                            <td class="tabla__fuerte">
+                                @firmante.NombreVisible
+                                <span class="selector__detalle">@firmante.CorreoInvitado</span>
+                            </td>
+                            <td><span class="@Etiquetas.Clase(firmante.EstadoFirma)">@firmante.EstadoFirma</span></td>
+                            <td class="tabla__tenue">@Hora.Formatear(firmante.FechaHoraEvento)</td>
+                            <td class="tabla__tenue">
+                                @if (firmado)
+                                {
+                                    @firmante.IpFirma<br />
+                                    <span class="hash" title="@firmante.HashFirma">@Etiquetas.HashCorto(firmante.HashFirma)</span>
+                                }
+                                else
+                                {
+                                    <text>—</text>
+                                }
+                            </td>
+                            <td>
+                                @if (!firmado)
+                                {
+                                    <form method="post" asp-page-handler="Reenviar" asp-route-idContrato="@contrato.IdContrato"
+                                          data-confirmar="¿Confirmar reenvío de solicitud a @firmante.NombreVisible?">
+                                        <input type="hidden" name="Firmante" value="@firmante.IdParte" />
+                                        <button type="submit" class="boton boton--secundario boton--chico">
+                                            <partial name="_Icono" model='"estado"' /> Reenviar
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <script>
+        // CU-09 paso 18: el panel se mantiene actualizado (se refresca si no hay diálogos ni avisos abiertos).
+        if (document.querySelector(".tabla")) {
+            setInterval(() => {
+                if (!document.querySelector(".modal") && !document.querySelector(".alerta--error")) window.location.reload();
+            }, 30000);
+        }
+    </script>
+}

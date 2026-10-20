@@ -1,0 +1,21 @@
+@using FirmaYa.Models.Entidades
+@model Contrato
+@* Tarjeta CONTRATO / ESTADO / VERSIÓN / HASH de los prototipos de los CU-02 a CU-14. *@
+<section class="tarjeta metadatos">
+    <div class="metadatos__item">
+        <span class="metadatos__etiqueta">Contrato</span>
+        <span class="metadatos__valor">@Model.Nombre</span>
+    </div>
+    <div class="metadatos__item">
+        <span class="metadatos__etiqueta">Estado</span>
+        <span><span class="@Etiquetas.Clase(Model.Estado)">@Model.Estado</span></span>
+    </div>
+    <div class="metadatos__item">
+        <span class="metadatos__etiqueta">Versión</span>
+        <span class="metadatos__valor">v@(Model.NumeroVersion)</span>
+    </div>
+    <div class="metadatos__item">
+        <span class="metadatos__etiqueta">Hash</span>
+        <span class="metadatos__hash" title="@Model.HashVersion">@Etiquetas.HashCorto(Model.HashVersion)</span>
+    </div>
+</section>

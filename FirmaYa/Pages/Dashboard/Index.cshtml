@@ -1,0 +1,54 @@
+@page
+@model FirmaYa.Pages.Dashboard.IndexModel
+@inject HoraLocal Hora
+@{
+    ViewData["Title"] = "Panel principal";
+}
+
+<div class="fila-titulo">
+    <partial name="_EncabezadoPagina" model='("panel", "Panel principal")' />
+    <a class="boton boton--primario" asp-page="/Contratos/NuevoContratoForm">
+        <partial name="_Icono" model='"mas"' /> Nuevo Contrato
+    </a>
+</div>
+
+<section class="tarjeta">
+    <h2 class="tarjeta__titulo">Mis contratos</h2>
+    <p class="tarjeta__subtitulo">Contratos que creaste o en los que participás.</p>
+
+    @if (Model.Contratos.Count == 0)
+    {
+        <p class="vacio">Todavía no hay contratos. Usá "Nuevo Contrato" para crear el primero desde una plantilla.</p>
+    }
+    else
+    {
+        <div class="tabla-contenedor">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Contrato</th>
+                        <th>Estado</th>
+                        <th>Versión</th>
+                        <th>Última modificación</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var contrato in Model.Contratos)
+                    {
+                        <tr>
+                            <td class="tabla__fuerte">@contrato.Nombre</td>
+                            <td><span class="@Etiquetas.Clase(contrato.Estado)">@contrato.Estado</span></td>
+                            <td>v@(contrato.NumeroVersion)</td>
+                            <td class="tabla__tenue">@Hora.Formatear(contrato.FechaUltimaModificacion)</td>
+                            <td>
+                                <a class="boton boton--secundario boton--chico" asp-page="/Contratos/EditarContratoForm"
+                                   asp-route-idContrato="@contrato.IdContrato">Abrir</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

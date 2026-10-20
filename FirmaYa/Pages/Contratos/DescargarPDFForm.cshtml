@@ -1,0 +1,66 @@
+@page "/Contratos/DescargarPDF"
+@model FirmaYa.Pages.Contratos.DescargarPDFForm
+@{
+    ViewData["Title"] = "Descargar contrato firmado en PDF";
+    var contrato = Model.DatosContrato!;
+    var urlFirmado = Url.Page("/Contratos/DescargarPDFForm", "Archivo", new { idContrato = Model.IdContrato, token = Model.Token });
+    var urlSinFirmas = Url.Page("/Contratos/DescargarPDFForm", "Archivo", new { idContrato = Model.IdContrato, token = Model.Token, sinFirmas = true });
+}
+
+<partial name="_EncabezadoPagina" model='("descargar", "Descargar contrato firmado en PDF")' />
+@if (Model.EsInterno)
+{
+    <partial name="_PestanasContrato" model='new PestanasContrato(contrato.IdContrato, "pdf", Model.EsTitular)' />
+}
+
+<section class="tarjeta descarga" id="descarga" data-nombre="@Model.NombreArchivo">
+    <span class="descarga__icono"><partial name="_Icono" model='"descargar"' /></span>
+    <h2 class="tarjeta__titulo">Descargar contrato firmado</h2>
+    <p class="campo__nota">El PDF final incluirá datos de firma, IP, fecha, hora y hash del documento.</p>
+
+    <div class="descarga__datos">
+        <div class="metadatos__item">
+            <span class="metadatos__etiqueta">Estado</span>
+            <span><span class="@Etiquetas.Clase(contrato.Estado)">@contrato.Estado</span></span>
+        </div>
+        <div class="metadatos__item">
+            <span class="metadatos__etiqueta">Versión</span>
+            <span class="metadatos__valor">v@(contrato.NumeroVersion)</span>
+        </div>
+        <div class="metadatos__item">
+            <span class="metadatos__etiqueta">Archivo</span>
+            <span class="metadatos__valor">@Model.NombreArchivo</span>
+        </div>
+    </div>
+
+    <div class="alerta alerta--info" id="estado-descarga" role="status" hidden></div>
+
+    @if (Model.Firmado)
+    {
+        <div class="acciones">
+            <a class="boton boton--primario" href="@urlFirmado" data-descargar>
+                <partial name="_Icono" model='"descargar"' /> Descargar PDF firmado
+            </a>
+            <button type="button" class="boton boton--secundario" data-reintentar hidden>
+                <partial name="_Icono" model='"estado"' /> Reintentar
+            </button>
+            <button type="button" class="boton boton--secundario" data-cancelar hidden>Cancelar</button>
+        </div>
+    }
+    else
+    {
+        @* alt [Contrato no está en estado Firmado] *@
+        <p class="nota">@DescargarPDFForm.MensajeNoFirmado</p>
+        <div class="acciones">
+            <a class="boton boton--secundario" href="@urlSinFirmas" data-descargar>
+                <partial name="_Icono" model='"descargar"' /> Descargar versión actual sin firmas
+            </a>
+            <button type="button" class="boton boton--secundario" data-reintentar hidden>Reintentar</button>
+            <button type="button" class="boton boton--secundario" data-cancelar hidden>Cancelar</button>
+        </div>
+    }
+</section>
+
+@section Scripts {
+    <script src="~/js/descarga.js" asp-append-version="true"></script>
+}

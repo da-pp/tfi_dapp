@@ -1,0 +1,615 @@
+/* FirmaYa — pantallas de contrato (prototipos CU-01 a CU-10). Usa los tokens de site.css. */
+
+.barra__marca a,
+.barra__enlace {
+    color: inherit;
+    text-decoration: none;
+}
+
+.barra__enlace {
+    font-size: 13px;
+    color: var(--color-texto-secundario);
+}
+
+.barra__enlace:hover {
+    color: var(--color-texto);
+}
+
+/* Título con ícono negro redondeado */
+.encabezado-pagina {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.encabezado-pagina__icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--color-primario);
+    color: #ffffff;
+    flex: none;
+}
+
+.encabezado-pagina__titulo {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.fila-titulo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.fila-titulo .encabezado-pagina {
+    margin-bottom: 0;
+}
+
+/* Tarjeta de metadatos CONTRATO / ESTADO / VERSIÓN / HASH */
+.metadatos {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr 1.6fr;
+    gap: 16px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+}
+
+.metadatos__item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.metadatos__etiqueta {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-texto-tenue);
+}
+
+.metadatos__valor {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.metadatos__hash,
+.hash {
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 12px;
+    color: var(--color-texto-secundario);
+    overflow-wrap: anywhere;
+}
+
+/* Pestañas del contrato */
+.pestanas {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    padding: 4px;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-control);
+    overflow-x: auto;
+}
+
+.pestanas__enlace {
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-texto-secundario);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.pestanas__enlace:hover {
+    background: #f1f5f9;
+    color: var(--color-texto);
+}
+
+.pestanas__enlace--activa,
+.pestanas__enlace--activa:hover {
+    background: var(--color-primario);
+    color: #ffffff;
+}
+
+/* Grillas de los prototipos */
+.grilla {
+    display: grid;
+    gap: 16px;
+    align-items: start;
+}
+
+.grilla--2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.grilla--principal {
+    grid-template-columns: 1.45fr 1fr;
+}
+
+.grilla--lateral {
+    grid-template-columns: 0.75fr 1.6fr;
+}
+
+.grilla--campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+}
+
+.grilla--campos .campo--completo {
+    grid-column: 1 / -1;
+}
+
+.tarjeta__subtitulo {
+    font-size: 12px;
+    color: var(--color-texto-secundario);
+    margin-top: -4px;
+    margin-bottom: 14px;
+}
+
+.tarjeta--interior {
+    padding: 16px;
+    border-radius: 14px;
+    background: #f8fafc;
+    box-shadow: none;
+}
+
+.pila {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.acciones {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.acciones--fin {
+    justify-content: flex-end;
+}
+
+/* Controles adicionales */
+textarea.campo__control {
+    height: auto;
+    min-height: 96px;
+    padding: 10px 14px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+select.campo__control {
+    appearance: none;
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+.campo__control:disabled,
+.campo__control[readonly] {
+    background-color: #f8fafc;
+    color: var(--color-texto-secundario);
+}
+
+.campo__nota {
+    font-size: 12px;
+    color: var(--color-texto-tenue);
+}
+
+.campo__nota--agotado {
+    color: var(--color-error);
+    font-weight: 600;
+}
+
+/* Etiquetas de estado */
+.etiqueta--exito {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #047857;
+}
+
+.etiqueta--alerta {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #a16207;
+}
+
+.etiqueta--peligro {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.etiqueta--info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+/* Tablas */
+.tabla-contenedor {
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    overflow-x: auto;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.tabla th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-texto-secundario);
+    background: #f8fafc;
+    white-space: nowrap;
+}
+
+.tabla td {
+    padding: 12px 14px;
+    border-top: 1px solid var(--color-borde);
+    vertical-align: middle;
+}
+
+.tabla td.tabla__fuerte {
+    font-weight: 600;
+}
+
+.tabla td.tabla__tenue {
+    color: var(--color-texto-tenue);
+}
+
+/* Selección de plantilla (CU-01) */
+.selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.selector__opcion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    color: var(--color-texto);
+    text-decoration: none;
+    background: var(--color-superficie);
+}
+
+.selector__opcion:hover {
+    border-color: #94a3b8;
+}
+
+.selector__opcion--activa {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 1px var(--color-primario);
+}
+
+.selector__titulo {
+    display: block;
+    font-weight: 600;
+}
+
+.selector__detalle {
+    display: block;
+    font-size: 12px;
+    color: var(--color-texto-tenue);
+}
+
+/* Contenido del contrato */
+.contenido-contrato {
+    padding: 22px 24px;
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    background: #f8fafc;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #334155;
+    overflow-wrap: anywhere;
+}
+
+.contenido-contrato h3 {
+    margin: 4px 0 10px;
+    font-size: 15px;
+    color: var(--color-texto);
+}
+
+.contenido-contrato p {
+    margin: 0 0 6px;
+}
+
+.contenido-contrato .contenido__vacio {
+    min-height: 8px;
+}
+
+.contenido-contrato blockquote {
+    margin: 6px 0;
+    padding: 8px 12px;
+    border-left: 3px solid #cbd5e1;
+    background: #ffffff;
+}
+
+.contenido-contrato--desplazable {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.fragmento {
+    padding: 10px 14px;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    background: #eff6ff;
+    font-size: 13px;
+    color: #1e3a8a;
+}
+
+/* Editor (CU-02) */
+.editor__barra {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.editor__boton {
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    background: var(--color-superficie);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.editor__boton:hover {
+    background: #f1f5f9;
+}
+
+.editor__estado {
+    margin-left: auto;
+}
+
+.editor__texto {
+    width: 100%;
+    min-height: 420px;
+    padding: 20px 22px;
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    background: #f8fafc;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #334155;
+    resize: vertical;
+}
+
+.editor__texto:focus {
+    outline: none;
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 4px var(--color-foco);
+}
+
+.campo--error .editor__texto {
+    border-color: var(--color-error);
+}
+
+.lista-validaciones {
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12px;
+    color: var(--color-texto-secundario);
+}
+
+.lista-validaciones li::before {
+    content: "• ";
+}
+
+/* Comentarios (CU-06) */
+.comentario {
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.comentario__autor {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.comentario__fecha {
+    display: block;
+    font-size: 11px;
+    color: var(--color-texto-tenue);
+}
+
+.comentario__texto {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #334155;
+    white-space: pre-line;
+}
+
+/* Progreso de firmas (CU-07, CU-09) */
+.progreso {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.progreso__barra {
+    flex: 1 1 260px;
+    max-width: 420px;
+    height: 8px;
+    border-radius: 999px;
+    background: #eef2f7;
+    overflow: hidden;
+}
+
+.progreso__relleno {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-primario);
+}
+
+/* Avisos */
+.nota {
+    padding: 12px 14px;
+    border: 1px solid var(--color-advertencia-borde);
+    border-radius: var(--radio-control);
+    background: var(--color-advertencia-fondo);
+    font-size: 13px;
+    color: var(--color-advertencia-texto);
+}
+
+.alerta--exito {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+}
+
+.alerta--info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e3a8a;
+}
+
+.flujo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.flujo__paso {
+    padding: 12px 14px;
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+.vacio {
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--color-texto-secundario);
+}
+
+/* Descarga del PDF (CU-10) */
+.descarga {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.descarga__icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.descarga__datos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    text-align: left;
+}
+
+/* Diálogo modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 50;
+}
+
+.modal__caja {
+    width: 100%;
+    max-width: 460px;
+    padding: 22px;
+    background: var(--color-superficie);
+    border-radius: var(--radio-tarjeta);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+}
+
+.modal__texto {
+    margin-bottom: 18px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* Firma OTP (CU-08) */
+.paso {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.codigo-otp {
+    max-width: 220px;
+    font-size: 22px;
+    letter-spacing: 0.4em;
+    text-align: center;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+@media (max-width: 900px) {
+    .grilla--2,
+    .grilla--principal,
+    .grilla--lateral {
+        grid-template-columns: 1fr;
+    }
+
+    .metadatos {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .grilla--campos,
+    .descarga__datos,
+    .metadatos {
+        grid-template-columns: 1fr;
+    }
+}

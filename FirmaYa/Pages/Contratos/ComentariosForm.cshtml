@@ -1,0 +1,108 @@
+@page "/Contratos/{idContrato:int}/Comentarios"
+@model FirmaYa.Pages.Contratos.ComentariosForm
+@inject HoraLocal Hora
+@{
+    ViewData["Title"] = "Agregar comentarios y observaciones";
+    var contrato = Model.Contrato!;
+}
+
+<div class="fila-titulo">
+    <partial name="_EncabezadoPagina" model='("comentario", "Agregar comentarios y observaciones")' />
+    <span class="etiqueta" title="Comentarios del contrato">@Model.Comentarios.Count comentarios</span>
+</div>
+<partial name="_CabeceraContrato" model="contrato" />
+<partial name="_PestanasContrato" model='new PestanasContrato(contrato.IdContrato, "comentarios", Model.EsTitular)' />
+
+<div class="grilla grilla--principal">
+    <section class="tarjeta">
+        <h2 class="tarjeta__titulo">Contrato</h2>
+        @if (Model.PuedeComentar)
+        {
+            <p class="tarjeta__subtitulo">Seleccioná un fragmento del texto para asociarlo al comentario (opcional).</p>
+        }
+        <div class="contenido-contrato" id="contenido-contrato">@Html.Raw(FormatoContenido.AHtml(contrato.ContenidoActual))</div>
+    </section>
+
+    <section class="tarjeta pila">
+        <h2 class="tarjeta__titulo">Comentarios</h2>
+
+        @if (Model.PuedeComentar)
+        {
+            <form method="post" id="form-comentario" class="pila" novalidate>
+                @if (Model.Error is not null)
+                {
+                    <div class="alerta alerta--error" role="alert">@Model.Error</div>
+                }
+                <div class="fragmento" id="fragmento" hidden>
+                    Fragmento seleccionado: “<span id="fragmento-texto"></span>”
+                </div>
+                <input type="hidden" name="FragmentoReferenciado" id="fragmento-valor" />
+                <div class="campo">
+                    <label class="campo__etiqueta" for="texto-comentario">Nuevo comentario <span class="campo__requerido">*</span></label>
+                    <textarea id="texto-comentario" name="TextoComentario" class="campo__control" rows="5" maxlength="1000"
+                              data-contador="contador-comentario" placeholder="Escribí una observación sobre el contrato.">@Model.TextoComentario</textarea>
+                    <span class="campo__ayuda"></span>
+                    <span class="campo__nota" id="contador-comentario">Máximo 1000 caracteres.</span>
+                </div>
+                <button type="submit" class="boton boton--primario boton--bloque">
+                    <partial name="_Icono" model='"comentario"' /> Publicar comentario
+                </button>
+            </form>
+        }
+        else if (!ContratoBLL.RolPermiteComentar(Model.RolUsuario))
+        {
+            @* alt [Rol es Solo lectura] *@
+            <p class="alerta alerta--info">@ComentariosForm.MensajeSoloLectura</p>
+        }
+        else
+        {
+            <p class="nota">El contrato está archivado y no admite comentarios.</p>
+        }
+
+        @if (Model.Comentarios.Count == 0)
+        {
+            <p class="vacio">Todavía no hay comentarios.</p>
+        }
+        @foreach (var comentario in Model.Comentarios)
+        {
+            <article class="comentario">
+                <span class="comentario__autor">@(string.IsNullOrWhiteSpace(comentario.NombreAutor) ? "—" : comentario.NombreAutor)</span>
+                <span class="comentario__fecha">@Hora.Formatear(comentario.FechaPublicacion)</span>
+                <p class="comentario__texto">@comentario.Texto</p>
+            </article>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        // CU-06 pasos 3, 4, 9 y 13: fragmento seleccionado y validación de comentario vacío.
+        (() => {
+            const formulario = document.getElementById("form-comentario");
+            if (!formulario) return;
+            const contenido = document.getElementById("contenido-contrato");
+            const caja = document.getElementById("fragmento");
+            const texto = document.getElementById("fragmento-texto");
+            const valor = document.getElementById("fragmento-valor");
+            const area = document.getElementById("texto-comentario");
+
+            contenido.addEventListener("mouseup", () => {
+                const seleccion = window.getSelection();
+                const elegido = seleccion.toString().trim();
+                if (!elegido || !contenido.contains(seleccion.anchorNode)) return;
+                texto.textContent = elegido.slice(0, 300);
+                valor.value = elegido.slice(0, 300);
+                caja.hidden = false;
+            });
+
+            formulario.addEventListener("submit", (evento) => {
+                if (!area.value.trim()) {
+                    evento.preventDefault();
+                    FirmaYa.marcarCampo(area, "El comentario no puede estar vacío");
+                    area.focus();
+                }
+            });
+            area.addEventListener("input", () => FirmaYa.marcarCampo(area, null));
+        })();
+    </script>
+}
